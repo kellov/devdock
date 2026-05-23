@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DevDock</title>
+  <style>
+    body { font-family: Arial, sans-serif; max-width: 600px; margin: 50px auto; padding: 0 20px; }
+    button { padding: 10px 20px; font-size: 16px; cursor: pointer; }
+    .card { border: 1px solid #ccc; padding: 15px; margin: 10px 0; border-radius: 8px; }
+    input, textarea { width: 100%; padding: 8px; margin: 5px 0; box-sizing: border-box; }
+  </style>
+</head>
+<body>
+  <h1>🛠️ DevDock</h1>
+  <div id="app">
+    <p>Загрузка...</p>
+  </div>
+
+  <!-- Firebase SDKs -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+    import { getAuth, signInWithPopup, GithubAuthProvider, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+    import { getFirestore, collection, addDoc, query, orderBy, limit, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+    // Твоя конфигурация
+    const firebaseConfig = {
+      apiKey: "AIzaSyCQlvzosVihEhlF2W-jE2DcYViqHXwT4YM",
+      authDomain: "devdock-5cb61.firebaseapp.com",
+      projectId: "devdock-5cb61",
+      storageBucket: "devdock-5cb61.firebasestorage.app",
+      messagingSenderId: "866582930096",
+      appId: "1:866582930096:web:6521525247be0ef271d175",
+      measurementId: "G-HXT5YK3Y68"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    const appDiv = document.getElementById('app');
+
+    // Рендер интерфейса
+    function render(user) {
+      if (user) {
+        appDiv.innerHTML = `
+          <p>Привет, <strong>${user.displayName || user.email}</strong>! 
+          <button id="logoutBtn">Выйти</button></p>
+          <hr>
+          <h3>📦 Твои проекты</h3>
+          <div id="projectsList">Загрузка проектов...</div>
+          <h4>➕ Добавить проект</h4>
+          <input type="text" id="projectName" placeholder="Название проекта" />
+          <textarea id="projectDesc" placeholder="Описание (необязательно)" rows="2"></textarea>
+          <button id="addProjectBtn">Добавить</button>
+        `;
+
+        // Подписка на проекты пользователя
+        const q = query(collection(db, "projects"), orderBy("createdAt", "desc"), limit(50));
+        const unsubscribe = onSnapshot(q, (snapshot) => {
+          const projectsDiv = document.getElementById('projectsList');
+          if (snapshot.empty) {
+            projectsDiv.innerHTML = '<p>Пока нет проектов.</p>';
+            return;
+          }
+          let html = '';
+          snapshot.forEach(doc => {
+            const data = doc.data();
+            html += `<div class="card">
+              <strong>${data.name || 'Без названия'}</strong>
+              <p>${data.description || ''}</p>
+              <small>${new Date(data.createdAt?.toDate()).toLocaleString()}</small>
+            </div>`;
+          });
+          projectsDiv.innerHTML = html;
+        });
+
+        document.getElementById('logoutBtn').addEventListener('click', () => signOut(auth));
+        document.getElementById('addProjectBtn').addEventListener('click', async () => {
+          const name = document.getElementById('projectName').value.trim();
+          const desc = document.getElementById('projectDesc').value.trim();
+          if (!name) return alert('Введи название');
+          try {
+            await addDoc(collection(db, "projects"), {
+              name,
+              description: desc,
+              createdAt: new Date(),
+              uid: user.uid
+            });
+            document.getElementById('projectName').value = '';
+            document.getElementById('projectDesc').value = '';
+          } catch (e) {
+            alert('Ошибка: ' + e.message);
+          }
+        });
+
+        // Отписка при выходе
+        window._unsubscribe = unsubscribe;
+      } else {
+        appDiv.innerHTML = `
+          <p>Добро пожаловать в DevDock — конструктор и хостинг для твоих проектов.</p>
+          <button id="loginBtn">Войти через GitHub</button>
+        `;
+        document.getElementById('loginBtn').addEventListener('click', async () => {
+          const provider = new GithubAuthProvider();
+          try {
+            await signInWithPopup(auth, provider);
+          } catch (e) {
+            alert('Ошибка входа: ' + e.message);
+          }
+        });
+      }
+    }
+
+    // Следим за состоянием авторизации
+    onAuthStateChanged(auth, (user) => {
+      render(user);
+      if (window._unsubscribe) {
+        window._unsubscribe();
+        window._unsubscribe = null;
+      }
+    });
+  </script>
+</body>
+</html>
