@@ -7,109 +7,67 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   <style>
     :root {
-      --bg: #0d1117;
-      --card: #161b22;
-      --border: #30363d;
-      --text: #c9d1d9;
-      --muted: #8b949e;
-      --accent: #58a6ff;
-      --green: #3fb950;
-      --red: #f85149;
-      --orange: #d2991d;
+      --bg: #0d1117; --card: #161b22; --border: #30363d;
+      --text: #c9d1d9; --muted: #8b949e; --accent: #58a6ff;
+      --green: #3fb950; --red: #f85149; --orange: #d2991d; --purple: #a371f7;
     }
     * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { 
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-      background: var(--bg); color: var(--text);
-      min-height: 100vh;
-    }
-    nav {
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 16px 24px; border-bottom: 1px solid var(--border);
-      background: var(--card);
-    }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+    nav { display: flex; align-items: center; justify-content: space-between; padding: 16px 24px; border-bottom: 1px solid var(--border); background: var(--card); }
     nav .logo { font-size: 22px; font-weight: 700; }
     nav .logo i { color: var(--accent); margin-right: 8px; }
     nav .user { display: flex; align-items: center; gap: 12px; }
     nav .user img { width: 32px; height: 32px; border-radius: 50%; }
-    nav button {
-      background: var(--card); color: var(--text);
-      border: 1px solid var(--border); padding: 8px 16px;
-      border-radius: 6px; cursor: pointer; font-size: 14px;
-      transition: 0.2s;
-    }
+    nav button { background: var(--card); color: var(--text); border: 1px solid var(--border); padding: 8px 16px; border-radius: 6px; cursor: pointer; font-size: 14px; transition: 0.2s; }
     nav button:hover { background: #1f2937; }
-    .container { max-width: 900px; margin: 0 auto; padding: 32px 20px; }
-
+    .container { max-width: 1000px; margin: 0 auto; padding: 32px 20px; }
+    .loading { text-align: center; padding: 80px; font-size: 18px; color: var(--muted); }
     .hero { text-align: center; padding: 80px 20px; }
     .hero h1 { font-size: 48px; margin-bottom: 16px; }
     .hero p { font-size: 18px; color: var(--muted); margin-bottom: 32px; max-width: 500px; margin-left: auto; margin-right: auto; }
-    .btn {
-      display: inline-flex; align-items: center; gap: 10px;
-      padding: 14px 28px; font-size: 16px; font-weight: 600;
-      border-radius: 8px; cursor: pointer; border: none;
-      transition: 0.2s; text-decoration: none;
-    }
+    .btn { display: inline-flex; align-items: center; gap: 8px; padding: 10px 20px; font-size: 14px; font-weight: 600; border-radius: 8px; cursor: pointer; border: none; transition: 0.2s; }
     .btn-google { background: #fff; color: #1f1f1f; }
     .btn-google:hover { background: #e8e8e8; }
     .btn-primary { background: var(--accent); color: #fff; }
     .btn-primary:hover { opacity: 0.85; }
+    .btn-success { background: var(--green); color: #fff; }
+    .btn-success:hover { opacity: 0.85; }
     .btn-danger { background: var(--red); color: #fff; }
     .btn-danger:hover { opacity: 0.85; }
-    .btn-sm { padding: 6px 12px; font-size: 13px; }
-
+    .btn-sm { padding: 6px 12px; font-size: 12px; }
     .page-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; flex-wrap: wrap; gap: 12px; }
     .page-header h2 { font-size: 28px; }
     .page-header h2 i { color: var(--accent); margin-right: 10px; }
-
-    .projects-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 16px; }
-    .project-card {
-      background: var(--card); border: 1px solid var(--border);
-      border-radius: 10px; padding: 20px; position: relative;
-      transition: 0.2s; cursor: pointer;
-    }
+    .projects-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px; }
+    .project-card { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 20px; position: relative; transition: 0.2s; cursor: pointer; }
     .project-card:hover { border-color: var(--accent); transform: translateY(-2px); }
     .project-card .icon { font-size: 28px; margin-bottom: 12px; }
-    .project-card h3 { font-size: 18px; margin-bottom: 6px; word-break: break-word; }
+    .project-card h3 { font-size: 18px; margin-bottom: 6px; }
     .project-card p { font-size: 13px; color: var(--muted); margin-bottom: 8px; }
     .project-card .meta { font-size: 12px; color: var(--muted); display: flex; gap: 12px; align-items: center; }
-    .project-card .delete-btn {
-      position: absolute; top: 12px; right: 12px;
-      background: none; border: none; color: var(--muted);
-      cursor: pointer; font-size: 16px; opacity: 0;
-      transition: 0.2s;
-    }
+    .project-card .delete-btn { position: absolute; top: 12px; right: 12px; background: none; border: none; color: var(--muted); cursor: pointer; font-size: 16px; opacity: 0; transition: 0.2s; }
     .project-card:hover .delete-btn { opacity: 1; }
     .project-card .delete-btn:hover { color: var(--red); }
-
-    .modal-overlay {
-      position: fixed; top: 0; left: 0; right: 0; bottom: 0;
-      background: rgba(0,0,0,0.7); display: flex; align-items: center; justify-content: center;
-      z-index: 1000;
-    }
-    .modal {
-      background: var(--card); border: 1px solid var(--border);
-      border-radius: 12px; padding: 28px; width: 90%; max-width: 450px;
-    }
+    .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.7); display: flex; align-items: center; justify-content: center; z-index: 1000; }
+    .modal { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 28px; width: 90%; max-width: 500px; }
     .modal h3 { margin-bottom: 16px; font-size: 20px; }
     .modal label { display: block; font-size: 13px; color: var(--muted); margin-bottom: 4px; }
-    .modal input, .modal textarea, .modal select {
-      width: 100%; padding: 10px; margin-bottom: 14px;
-      background: var(--bg); border: 1px solid var(--border);
-      border-radius: 6px; color: var(--text); font-size: 14px;
-    }
+    .modal input, .modal textarea, .modal select { width: 100%; padding: 10px; margin-bottom: 14px; background: var(--bg); border: 1px solid var(--border); border-radius: 6px; color: var(--text); font-size: 14px; }
     .modal .actions { display: flex; gap: 10px; justify-content: flex-end; }
-
     .empty { text-align: center; padding: 60px 20px; color: var(--muted); }
     .empty i { font-size: 48px; margin-bottom: 16px; display: block; }
-
-    .toast {
-      position: fixed; bottom: 24px; right: 24px;
-      background: var(--green); color: #fff; padding: 12px 20px;
-      border-radius: 8px; font-size: 14px; z-index: 2000;
-      animation: slideUp 0.3s ease;
-    }
+    .toast { position: fixed; bottom: 24px; right: 24px; background: var(--green); color: #fff; padding: 12px 20px; border-radius: 8px; font-size: 14px; z-index: 2000; animation: slideUp 0.3s ease; }
     @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+    .section-box { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 20px; margin-bottom: 16px; }
+    .section-box h4 { margin-bottom: 12px; font-size: 16px; }
+    .file-item { display: flex; align-items: center; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid var(--border); }
+    .file-item:last-child { border-bottom: none; }
+    .command-item { display: flex; align-items: center; justify-content: space-between; padding: 10px; background: var(--bg); border-radius: 6px; margin-bottom: 8px; }
+    .tag { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; }
+    .tag-valid { background: var(--green); color: #fff; }
+    .tag-invalid { background: var(--red); color: #fff; }
+    .spinner { display: inline-block; width: 16px; height: 16px; border: 2px solid var(--muted); border-top-color: var(--accent); border-radius: 50%; animation: spin 0.6s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
   </style>
 </head>
 <body>
@@ -117,15 +75,13 @@
     <div class="logo"><i class="fa-solid fa-dharmachakra"></i>DevDock</div>
     <div class="user" id="navUser"></div>
   </nav>
-
-  <div class="container" id="app">
-    <p style="text-align:center;padding:80px;">Загрузка...</p>
-  </div>
+  <div class="container" id="app"><p class="loading">Загрузка...</p></div>
 
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
     import { getAuth, signInWithPopup, GoogleAuthProvider, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-    import { getDatabase, ref, set, push, onValue, remove, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+    import { getDatabase, ref, set, push, onValue, remove, serverTimestamp, update } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+    import { getStorage, ref as sRef, uploadBytesResumable, getDownloadURL, listAll, deleteObject } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-storage.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyCQlvzosVihEhlF2W-jE2DcYViqHXwT4YM",
@@ -139,17 +95,16 @@
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
     const db = getDatabase(app);
+    const storage = getStorage(app);
 
     const appDiv = document.getElementById('app');
     const navUser = document.getElementById('navUser');
-
+    let currentUser = null;
     const projectIcons = ['fa-robot', 'fa-code', 'fa-globe', 'fa-mobile-screen', 'fa-database', 'fa-cloud', 'fa-cog', 'fa-bolt'];
 
     function toast(msg) {
-      const t = document.createElement('div');
-      t.className = 'toast'; t.textContent = msg;
-      document.body.appendChild(t);
-      setTimeout(() => t.remove(), 2500);
+      const t = document.createElement('div'); t.className = 'toast'; t.textContent = msg;
+      document.body.appendChild(t); setTimeout(() => t.remove(), 2500);
     }
 
     function formatDate(ts) {
@@ -157,167 +112,220 @@
       return new Date(ts).toLocaleDateString('ru-RU', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' });
     }
 
-    let currentUser = null;
+    async function checkBotToken(token) {
+      try {
+        const res = await fetch(`https://api.telegram.org/bot${token}/getMe`);
+        const data = await res.json();
+        return data.ok ? data.result : null;
+      } catch { return null; }
+    }
 
     function showModal(title, fields, cb) {
-      const overlay = document.createElement('div');
-      overlay.className = 'modal-overlay';
-      let formHtml = fields.map(f => `
-        <label>${f.label}</label>
-        ${f.type === 'textarea' ? `<textarea id="modal_${f.id}" placeholder="${f.placeholder || ''}" rows="3"></textarea>` : 
-          f.type === 'select' ? `<select id="modal_${f.id}">${f.options.map(o => `<option value="${o}">${o}</option>`).join('')}</select>` :
-          `<input type="${f.type || 'text'}" id="modal_${f.id}" placeholder="${f.placeholder || ''}" />`}
-      `).join('');
-      overlay.innerHTML = `
-        <div class="modal">
-          <h3>${title}</h3>
-          ${formHtml}
-          <div class="actions">
-            <button class="btn btn-sm" id="modalCancel">Отмена</button>
-            <button class="btn btn-primary btn-sm" id="modalOk">OK</button>
-          </div>
-        </div>`;
+      const overlay = document.createElement('div'); overlay.className = 'modal-overlay';
+      let html = fields.map(f => {
+        if (f.type === 'custom') return f.html;
+        return `<label>${f.label}</label>` + (
+          f.type === 'textarea' ? `<textarea id="modal_${f.id}" placeholder="${f.placeholder||''}" rows="3"></textarea>` :
+          f.type === 'select' ? `<select id="modal_${f.id}">${f.options.map(o=>`<option value="${o}">${o}</option>`).join('')}</select>` :
+          f.type === 'file' ? `<input type="file" id="modal_${f.id}" />` :
+          `<input type="${f.type||'text'}" id="modal_${f.id}" placeholder="${f.placeholder||''}" value="${f.value||''}" />`
+        );
+      }).join('');
+      overlay.innerHTML = `<div class="modal"><h3>${title}</h3>${html}<div class="actions"><button class="btn btn-sm" id="modalCancel">Отмена</button><button class="btn btn-primary btn-sm" id="modalOk">OK</button></div></div>`;
       document.body.appendChild(overlay);
       document.getElementById('modalCancel').onclick = () => overlay.remove();
       document.getElementById('modalOk').onclick = () => {
-        const values = {};
-        fields.forEach(f => {
+        const vals = {};
+        fields.filter(f=>f.type!=='custom').forEach(f => {
           const el = document.getElementById(`modal_${f.id}`);
-          values[f.id] = el ? el.value.trim() : '';
+          vals[f.id] = f.type === 'file' ? (el.files[0] || null) : (el?.value?.trim() || '');
         });
-        overlay.remove();
-        if (cb) cb(values);
+        overlay.remove(); if(cb) cb(vals);
       };
-      overlay.onclick = (e) => { if (e.target === overlay) overlay.remove(); };
+      overlay.onclick = e => { if(e.target===overlay) overlay.remove(); };
     }
 
+    // ======= DASHBOARD =======
     function renderDashboard(user) {
       currentUser = user;
-      navUser.innerHTML = `
-        <img src="${user.photoURL}" alt="avatar" />
-        <span>${user.displayName || user.email}</span>
-        <button id="logoutBtn"><i class="fa-solid fa-right-from-bracket"></i> Выйти</button>`;
-
+      navUser.innerHTML = `<img src="${user.photoURL}" alt=""/> <span>${user.displayName||user.email}</span> <button id="logoutBtn"><i class="fa-solid fa-right-from-bracket"></i> Выйти</button>`;
       appDiv.innerHTML = `
         <div class="page-header">
           <h2><i class="fa-solid fa-folder-tree"></i>Мои проекты</h2>
           <button class="btn btn-primary" id="addProjectBtn"><i class="fa-solid fa-plus"></i> Новый проект</button>
         </div>
         <div class="projects-grid" id="projectsGrid"></div>`;
-
       document.getElementById('logoutBtn').onclick = () => signOut(auth);
-      document.getElementById('addProjectBtn').onclick = () => {
-        showModal('Новый проект', [
-          { id: 'name', label: 'Название', placeholder: 'Мой бот / сайт / скрипт' },
-          { id: 'description', label: 'Описание', type: 'textarea', placeholder: 'Что делает проект...' },
-          { id: 'type', label: 'Тип', type: 'select', options: ['🤖 Telegram бот', '🌐 Сайт', '⚙️ Скрипт', '📱 Приложение', '🗄️ База данных', '☁️ Облачная функция'] }
-        ], async (vals) => {
-          if (!vals.name) return toast('Название обязательно!');
-          const projectsRef = ref(db, `projects/${user.uid}`);
-          const newRef = push(projectsRef);
-          await set(newRef, {
-            name: vals.name,
-            description: vals.description,
-            type: vals.type,
-            icon: projectIcons[Math.floor(Math.random() * projectIcons.length)],
-            createdAt: serverTimestamp(),
-            updatedAt: serverTimestamp()
-          });
-          toast('Проект создан!');
-        });
-      };
-
-      const projectsRef = ref(db, `projects/${user.uid}`);
-      onValue(projectsRef, (snapshot) => {
-        const grid = document.getElementById('projectsGrid');
-        if (!grid) return;
-        const data = snapshot.val();
-        if (!data) {
-          grid.innerHTML = `<div class="empty" style="grid-column:1/-1;"><i class="fa-solid fa-folder-open"></i><p>Нет проектов. Нажми «Новый проект», чтобы начать.</p></div>`;
-          return;
+      document.getElementById('addProjectBtn').onclick = () => showModal('Новый проект', [
+        {id:'name',label:'Название',placeholder:'Мой бот / сайт / скрипт'},
+        {id:'description',label:'Описание',type:'textarea',placeholder:'Что делает проект...'},
+        {id:'botToken',label:'Токен бота (если Telegram)',placeholder:'123456:ABC-DEF...'},
+        {id:'type',label:'Тип',type:'select',options:['🤖 Telegram бот','🌐 Сайт','⚙️ Скрипт','📱 Приложение','🗄️ База данных','☁️ Облачная функция']}
+      ], async (vals) => {
+        if(!vals.name) return toast('Название обязательно!');
+        let botInfo = null;
+        if(vals.botToken) {
+          botInfo = await checkBotToken(vals.botToken);
+          if(!botInfo) return toast('❌ Неверный токен бота!');
         }
-        const entries = Object.entries(data).sort((a, b) => (b[1].createdAt || 0) - (a[1].createdAt || 0));
-        grid.innerHTML = entries.map(([id, p]) => `
+        const pRef = ref(db, `projects/${user.uid}`);
+        const newRef = push(pRef);
+        await set(newRef, {
+          name:vals.name, description:vals.description, type:vals.type,
+          botToken: vals.botToken || null,
+          botInfo: botInfo ? {username:botInfo.username, firstName:botInfo.first_name, id:botInfo.id} : null,
+          icon: projectIcons[Math.floor(Math.random()*projectIcons.length)],
+          commands: [],
+          repoUrl: null,
+          createdAt: serverTimestamp(), updatedAt: serverTimestamp()
+        });
+        toast(botInfo ? `✅ Бот @${botInfo.username} подключён!` : 'Проект создан!');
+      });
+
+      onValue(ref(db, `projects/${user.uid}`), snap => {
+        const grid = document.getElementById('projectsGrid');
+        if(!grid) return;
+        const data = snap.val();
+        if(!data) { grid.innerHTML = `<div class="empty"><i class="fa-solid fa-folder-open"></i><p>Нет проектов</p></div>`; return; }
+        const entries = Object.entries(data).sort((a,b)=> (b[1].createdAt||0)-(a[1].createdAt||0));
+        grid.innerHTML = entries.map(([id,p]) => `
           <div class="project-card" data-id="${id}">
-            <i class="fa-solid ${p.icon || 'fa-folder'} icon"></i>
-            <h3>${p.name}</h3>
-            <p>${p.description || 'Без описания'}</p>
-            <span class="meta">
-              <span>${p.type || 'Проект'}</span>
-              <span>${formatDate(p.createdAt)}</span>
-            </span>
+            <i class="fa-solid ${p.icon||'fa-folder'} icon"></i>
+            <h3>${p.name} ${p.botInfo ? `<span class="tag tag-valid">@${p.botInfo.username}</span>` : ''}</h3>
+            <p>${p.description||'Без описания'}</p>
+            <span class="meta"><span>${p.type||'Проект'}</span><span>${formatDate(p.createdAt)}</span></span>
             <button class="delete-btn" data-id="${id}"><i class="fa-solid fa-trash"></i></button>
           </div>`).join('');
-
-        document.querySelectorAll('.delete-btn').forEach(btn => {
-          btn.onclick = async (e) => {
-            e.stopPropagation();
-            const id = btn.dataset.id;
-            const project = data[id];
-            if (confirm(`Удалить проект «${project.name}»? Это действие необратимо.`)) {
-              await remove(ref(db, `projects/${user.uid}/${id}`));
-              toast('Проект удалён');
-            }
-          };
+        document.querySelectorAll('.delete-btn').forEach(b => b.onclick = async e => {
+          e.stopPropagation(); const id = b.dataset.id;
+          if(confirm(`Удалить проект «${data[id].name}»?`)) { await remove(ref(db,`projects/${user.uid}/${id}`)); toast('Удалён'); }
         });
-
-        document.querySelectorAll('.project-card').forEach(card => {
-          card.onclick = () => {
-            const id = card.dataset.id;
-            const project = data[id];
-            showProjectDetail(user.uid, id, project);
-          };
-        });
+        document.querySelectorAll('.project-card').forEach(c => c.onclick = () => showProject(user.uid, c.dataset.id, data[c.dataset.id]));
       });
     }
 
-    function showProjectDetail(uid, projectId, project) {
+    // ======= PROJECT DETAIL =======
+    function showProject(uid, pid, project) {
+      currentUser = project;
       appDiv.innerHTML = `
         <div class="page-header">
           <h2><i class="fa-solid fa-arrow-left" id="backBtn" style="cursor:pointer;margin-right:12px;"></i>${project.name}</h2>
           <div>
-            <button class="btn btn-sm" id="editProjectBtn"><i class="fa-solid fa-pen-to-square"></i> Редактировать</button>
-            <button class="btn btn-sm btn-danger" id="deleteProjectBtn"><i class="fa-solid fa-trash"></i> Удалить</button>
+            <button class="btn btn-sm" id="editBtn"><i class="fa-solid fa-pen-to-square"></i> Редактировать</button>
+            <button class="btn btn-sm btn-danger" id="delBtn"><i class="fa-solid fa-trash"></i> Удалить</button>
           </div>
         </div>
-        <div style="background:var(--card);border:1px solid var(--border);border-radius:10px;padding:24px;">
-          <p><i class="fa-solid fa-tag"></i> <strong>Тип:</strong> ${project.type || 'Не указан'}</p>
-          <p><i class="fa-solid fa-align-left"></i> <strong>Описание:</strong> ${project.description || 'Нет описания'}</p>
+        <div class="section-box">
+          <p><i class="fa-solid fa-tag"></i> <strong>Тип:</strong> ${project.type||'—'}</p>
+          <p><i class="fa-solid fa-align-left"></i> <strong>Описание:</strong> ${project.description||'—'}</p>
           <p><i class="fa-solid fa-clock"></i> <strong>Создан:</strong> ${formatDate(project.createdAt)}</p>
-          <p><i class="fa-solid fa-pen"></i> <strong>Обновлён:</strong> ${formatDate(project.updatedAt)}</p>
+          ${project.botInfo ? `<p><i class="fa-solid fa-robot"></i> <strong>Бот:</strong> @${project.botInfo.username} <span class="tag tag-valid">✔ активен</span></p>` : ''}
         </div>
-        <h3 style="margin-top:28px;"><i class="fa-solid fa-file-code"></i> Файлы проекта</h3>
-        <div id="filesSection">
-          <p style="color:var(--muted);padding:20px;">📂 Загрузка файлов будет доступна после подключения Storage.</p>
+        ${project.botToken ? `<div class="section-box">
+          <h4><i class="fa-solid fa-terminal"></i> Конструктор команд</h4>
+          <div id="commandsList"></div>
+          <button class="btn btn-sm btn-primary" id="addCommandBtn" style="margin-top:8px;"><i class="fa-solid fa-plus"></i> Добавить команду</button>
+        </div>` : ''}
+        <div class="section-box">
+          <h4><i class="fa-solid fa-file"></i> Файлы проекта</h4>
+          <div id="filesList"><p style="color:var(--muted);">Загрузка...</p></div>
+          <button class="btn btn-sm btn-primary" id="uploadFileBtn" style="margin-top:8px;"><i class="fa-solid fa-upload"></i> Загрузить файл</button>
         </div>
-      `;
+        <div class="section-box">
+          <h4><i class="fa-brands fa-github"></i> GitHub</h4>
+          ${project.repoUrl ? `<p>🔗 <a href="${project.repoUrl}" target="_blank" style="color:var(--accent);">${project.repoUrl}</a></p><button class="btn btn-sm btn-danger" id="unlinkRepoBtn"><i class="fa-solid fa-unlink"></i> Отвязать</button>` : `<button class="btn btn-sm" id="linkRepoBtn"><i class="fa-brands fa-github"></i> Привязать репозиторий</button>`}
+        </div>`;
 
       document.getElementById('backBtn').onclick = () => renderDashboard(currentUser);
-      document.getElementById('deleteProjectBtn').onclick = async () => {
-        if (confirm(`Удалить проект «${project.name}»?`)) {
-          await remove(ref(db, `projects/${uid}/${projectId}`));
-          toast('Проект удалён');
-          renderDashboard(currentUser);
-        }
+      document.getElementById('delBtn').onclick = async () => {
+        if(confirm(`Удалить «${project.name}»?`)) { await remove(ref(db,`projects/${uid}/${pid}`)); toast('Удалён'); renderDashboard(currentUser); }
       };
-      document.getElementById('editProjectBtn').onclick = () => {
-        showModal('Редактировать проект', [
-          { id: 'name', label: 'Название', placeholder: project.name },
-          { id: 'description', label: 'Описание', type: 'textarea', placeholder: project.description || '' },
-          { id: 'type', label: 'Тип', type: 'select', options: ['🤖 Telegram бот', '🌐 Сайт', '⚙️ Скрипт', '📱 Приложение', '🗄️ База данных', '☁️ Облачная функция'] }
-        ], async (vals) => {
-          if (!vals.name) return toast('Название обязательно!');
-          await set(ref(db, `projects/${uid}/${projectId}`), {
-            ...project,
-            name: vals.name,
-            description: vals.description,
-            type: vals.type,
-            updatedAt: serverTimestamp()
-          });
-          toast('Проект обновлён');
-          renderDashboard(currentUser);
+      document.getElementById('editBtn').onclick = () => {
+        showModal('Редактировать', [
+          {id:'name',label:'Название',value:project.name},
+          {id:'description',label:'Описание',type:'textarea',value:project.description||''},
+          {id:'type',label:'Тип',type:'select',options:['🤖 Telegram бот','🌐 Сайт','⚙️ Скрипт','📱 Приложение','🗄️ База данных','☁️ Облачная функция']}
+        ], async vals => {
+          await update(ref(db,`projects/${uid}/${pid}`), {name:vals.name,description:vals.description,type:vals.type,updatedAt:serverTimestamp()});
+          toast('Обновлено'); showProject(uid,pid,{...project,name:vals.name,description:vals.description,type:vals.type});
         });
       };
+
+      // GitHub
+      const linkBtn = document.getElementById('linkRepoBtn');
+      const unlinkBtn = document.getElementById('unlinkRepoBtn');
+      if(linkBtn) linkBtn.onclick = () => showModal('Привязать репозиторий', [{id:'repoUrl',label:'URL репозитория',placeholder:'https://github.com/user/repo'}], async vals => {
+        if(!vals.repoUrl) return;
+        await update(ref(db,`projects/${uid}/${pid}`), {repoUrl:vals.repoUrl,updatedAt:serverTimestamp()});
+        toast('✅ Репозиторий привязан'); showProject(uid,pid,{...project,repoUrl:vals.repoUrl});
+      });
+      if(unlinkBtn) unlinkBtn.onclick = async () => {
+        await update(ref(db,`projects/${uid}/${pid}`), {repoUrl:null,updatedAt:serverTimestamp()});
+        toast('Репозиторий отвязан'); showProject(uid,pid,{...project,repoUrl:null});
+      };
+
+      // Файлы
+      const filesRef = sRef(storage, `files/${uid}/${pid}`);
+      listAll(filesRef).then(res => {
+        const fl = document.getElementById('filesList');
+        if(!fl) return;
+        if(res.items.length===0) { fl.innerHTML='<p style="color:var(--muted);">Нет файлов</p>'; return; }
+        Promise.all(res.items.map(item => getDownloadURL(item).then(url => ({name:item.name,url,path:item.fullPath})))).then(files => {
+          fl.innerHTML = files.map(f => `<div class="file-item"><span><i class="fa-solid fa-file"></i> ${f.name}</span><div><a href="${f.url}" target="_blank" class="btn btn-xs btn-primary"><i class="fa-solid fa-download"></i></a><button class="btn btn-xs btn-danger delFile" data-path="${f.path}"><i class="fa-solid fa-trash"></i></button></div></div>`).join('');
+          document.querySelectorAll('.delFile').forEach(b => b.onclick = async () => {
+            await deleteObject(sRef(storage, b.dataset.path)); toast('Файл удалён');
+            showProject(uid,pid,project);
+          });
+        });
+      });
+      document.getElementById('uploadFileBtn').onclick = () => showModal('Загрузить файл', [{id:'file',label:'Выберите файл',type:'file'}], async vals => {
+        if(!vals.file) return;
+        const uploadTask = uploadBytesResumable(sRef(storage, `files/${uid}/${pid}/${vals.file.name}`), vals.file);
+        uploadTask.on('state_changed', null, null, () => { toast('✅ Файл загружен'); showProject(uid,pid,project); });
+      });
+
+      // Команды бота
+      if(project.botToken) {
+        const renderCommands = () => {
+          const cl = document.getElementById('commandsList');
+          const cmds = project.commands || [];
+          if(cmds.length===0) { cl.innerHTML='<p style="color:var(--muted);">Нет команд</p>'; return; }
+          cl.innerHTML = cmds.map((c,i) => `
+            <div class="command-item">
+              <span><strong>/${c.command}</strong> — ${c.response||'Нет ответа'}</span>
+              <div><button class="btn btn-xs btn-sm editCmd" data-idx="${i}"><i class="fa-solid fa-pen"></i></button><button class="btn btn-xs btn-danger delCmd" data-idx="${i}"><i class="fa-solid fa-trash"></i></button></div>
+            </div>`).join('');
+          document.querySelectorAll('.delCmd').forEach(b => b.onclick = async () => {
+            const cmds2 = [...(project.commands||[])];
+            cmds2.splice(parseInt(b.dataset.idx),1);
+            await update(ref(db,`projects/${uid}/${pid}`), {commands:cmds2,updatedAt:serverTimestamp()});
+            project.commands = cmds2; renderCommands();
+          });
+          document.querySelectorAll('.editCmd').forEach(b => b.onclick = () => {
+            const i = parseInt(b.dataset.idx);
+            const cmd = project.commands[i];
+            showModal('Редактировать команду', [
+              {id:'command',label:'Команда (без /)',value:cmd.command},
+              {id:'response',label:'Ответ',type:'textarea',value:cmd.response}
+            ], async vals => {
+              const cmds2 = [...(project.commands||[])];
+              cmds2[i] = {command:vals.command,response:vals.response};
+              await update(ref(db,`projects/${uid}/${pid}`), {commands:cmds2,updatedAt:serverTimestamp()});
+              project.commands = cmds2; renderCommands();
+            });
+          });
+        };
+        renderCommands();
+        document.getElementById('addCommandBtn').onclick = () => showModal('Новая команда', [
+          {id:'command',label:'Команда (без /)',placeholder:'start'},
+          {id:'response',label:'Ответ бота',type:'textarea',placeholder:'Привет! Я бот...'}
+        ], async vals => {
+          if(!vals.command) return;
+          const cmds = [...(project.commands||[]), {command:vals.command,response:vals.response}];
+          await update(ref(db,`projects/${uid}/${pid}`), {commands:cmds,updatedAt:serverTimestamp()});
+          project.commands = cmds; toast('Команда добавлена'); renderCommands();
+        });
+      }
     }
 
     function renderLanding() {
@@ -325,24 +333,17 @@
       appDiv.innerHTML = `
         <div class="hero">
           <h1><i class="fa-solid fa-dharmachakra" style="color:var(--accent);"></i> DevDock</h1>
-          <p>Создавай, управляй и хости свои проекты в одном месте. Конструктор ботов, сайтов и скриптов с интеграцией GitHub.</p>
+          <p>Создавай, управляй и хости свои проекты. Конструктор ботов, загрузка файлов и интеграция с GitHub.</p>
           <button class="btn btn-google" id="loginBtn"><i class="fa-brands fa-google"></i> Войти через Google</button>
-          <p style="margin-top:16px;font-size:13px;color:var(--muted);">Нет аккаунта? Он создастся автоматически при входе.</p>
+          <p style="margin-top:16px;font-size:13px;color:var(--muted);">Нет аккаунта? Он создастся автоматически.</p>
         </div>`;
       document.getElementById('loginBtn').onclick = async () => {
-        const provider = new GoogleAuthProvider();
-        try {
-          await signInWithPopup(auth, provider);
-        } catch (e) {
-          alert('Ошибка входа: ' + e.message);
-        }
+        try { await signInWithPopup(auth, new GoogleAuthProvider()); }
+        catch(e) { toast('Ошибка входа: '+e.message); }
       };
     }
 
-    onAuthStateChanged(auth, (user) => {
-      if (user) renderDashboard(user);
-      else renderLanding();
-    });
+    onAuthStateChanged(auth, user => user ? renderDashboard(user) : renderLanding());
   </script>
 </body>
 </html>
