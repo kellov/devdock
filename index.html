@@ -3,39 +3,21 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-  <title>DevDock — Хостинг и конструктор Telegram ботов 24/7</title>
+  <title>DevDock — Управление и аналитика для ботов и сайтов</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
   <style>
     :root {
-      --bg: #0d1117;
-      --card: #161b22;
-      --border: #30363d;
-      --text: #c9d1d9;
-      --muted: #8b949e;
-      --accent: #58a6ff;
-      --accent-hover: #79b8ff;
-      --green: #3fb950;
-      --red: #f85149;
-      --orange: #d2991d;
-      --purple: #a371f7;
-      --shadow: 0 2px 8px rgba(0,0,0,0.4);
-      --radius: 8px;
+      --bg: #0d1117; --card: #161b22; --border: #30363d;
+      --text: #c9d1d9; --muted: #8b949e; --accent: #58a6ff;
+      --accent-hover: #79b8ff; --green: #3fb950; --red: #f85149;
+      --orange: #d2991d; --purple: #a371f7; --shadow: 0 2px 8px rgba(0,0,0,0.4); --radius: 8px;
     }
     * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { 
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
-      background: var(--bg); color: var(--text); line-height: 1.5;
-      min-height: 100vh; display: flex; flex-direction: column;
-    }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif; background: var(--bg); color: var(--text); line-height: 1.5; min-height: 100vh; display: flex; flex-direction: column; }
     a { color: var(--accent); text-decoration: none; }
     a:hover { text-decoration: underline; }
-
-    .navbar {
-      background: var(--card); border-bottom: 1px solid var(--border);
-      padding: 14px 24px; display: flex; align-items: center; justify-content: space-between;
-      flex-wrap: wrap; gap: 12px; position: sticky; top: 0; z-index: 50;
-    }
+    .navbar { background: var(--card); border-bottom: 1px solid var(--border); padding: 14px 24px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; position: sticky; top: 0; z-index: 50; }
     .navbar .logo { font-size: 1.5rem; font-weight: 700; display: flex; align-items: center; gap: 8px; cursor: pointer; }
     .navbar .logo i { color: var(--accent); }
     .nav-links { display: flex; gap: 24px; align-items: center; }
@@ -45,82 +27,55 @@
     .user-menu img { width: 36px; height: 36px; border-radius: 50%; border: 2px solid var(--border); }
     .user-menu button { background: transparent; color: var(--text); border: 1px solid var(--border); padding: 8px 14px; border-radius: 6px; cursor: pointer; transition: 0.2s; }
     .user-menu button:hover { background: #1f2937; }
-
     .container { max-width: 1280px; margin: 0 auto; padding: 24px 20px; width: 100%; flex: 1; }
     .page-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; flex-wrap: wrap; gap: 12px; }
     .page-header h2 { font-size: 1.8rem; display: flex; align-items: center; gap: 10px; }
-
-    .btn {
-      display: inline-flex; align-items: center; justify-content: center; gap: 8px;
-      padding: 10px 20px; font-size: 0.9rem; font-weight: 600; border-radius: 6px;
-      cursor: pointer; border: none; transition: all 0.2s; white-space: nowrap;
-    }
-    .btn-google { background: #fff; color: #1f1f1f; }
-    .btn-google:hover { background: #e8e8e8; }
-    .btn-github { background: #24292f; color: #fff; }
-    .btn-github:hover { background: #2b3138; }
-    .btn-primary { background: var(--accent); color: #fff; }
-    .btn-primary:hover { background: var(--accent-hover); }
-    .btn-success { background: var(--green); color: #fff; }
-    .btn-success:hover { opacity: 0.9; }
-    .btn-danger { background: var(--red); color: #fff; }
-    .btn-danger:hover { opacity: 0.9; }
-    .btn-outline { background: transparent; border: 1px solid var(--border); color: var(--text); }
-    .btn-outline:hover { background: #1f2937; }
+    .btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 10px 20px; font-size: 0.9rem; font-weight: 600; border-radius: 6px; cursor: pointer; border: none; transition: all 0.2s; white-space: nowrap; }
+    .btn-google { background: #fff; color: #1f1f1f; } .btn-google:hover { background: #e8e8e8; }
+    .btn-github { background: #24292f; color: #fff; } .btn-github:hover { background: #2b3138; }
+    .btn-primary { background: var(--accent); color: #fff; } .btn-primary:hover { background: var(--accent-hover); }
+    .btn-success { background: var(--green); color: #fff; } .btn-success:hover { opacity: 0.9; }
+    .btn-danger { background: var(--red); color: #fff; } .btn-danger:hover { opacity: 0.9; }
+    .btn-outline { background: transparent; border: 1px solid var(--border); color: var(--text); } .btn-outline:hover { background: #1f2937; }
     .btn-sm { padding: 6px 12px; font-size: 0.8rem; }
     .btn-xs { padding: 4px 8px; font-size: 0.7rem; }
-
     .card { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px; transition: all 0.2s; }
     .card:hover { border-color: var(--accent); box-shadow: var(--shadow); }
     .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px; }
-
     .tabs { display: flex; gap: 8px; margin-bottom: 20px; flex-wrap: wrap; }
     .tab { padding: 8px 16px; background: var(--card); border: 1px solid var(--border); border-radius: 6px; cursor: pointer; font-size: 0.9rem; }
     .tab.active { background: var(--accent); border-color: var(--accent); color: #fff; }
-
-    input, textarea, select {
-      width: 100%; padding: 10px 12px; background: var(--bg); border: 1px solid var(--border);
-      border-radius: 6px; color: var(--text); font-size: 0.9rem; outline: none; transition: border 0.2s;
-    }
+    input, textarea, select { width: 100%; padding: 10px 12px; background: var(--bg); border: 1px solid var(--border); border-radius: 6px; color: var(--text); font-size: 0.9rem; outline: none; transition: border 0.2s; }
     input:focus, textarea:focus, select:focus { border-color: var(--accent); }
     label { display: block; font-size: 0.85rem; color: var(--muted); margin-bottom: 4px; }
-
     .badge { display: inline-block; padding: 2px 8px; border-radius: 12px; font-size: 0.7rem; font-weight: 600; }
     .badge-success { background: var(--green); color: #fff; }
     .badge-danger { background: var(--red); color: #fff; }
     .badge-warning { background: var(--orange); color: #000; }
     .badge-accent { background: var(--accent); color: #fff; }
-
     .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.7); display: flex; align-items: center; justify-content: center; z-index: 1000; }
     .modal { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 24px; width: 90%; max-width: 520px; max-height: 90vh; overflow-y: auto; }
     .modal h3 { margin-bottom: 16px; }
     .modal .actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 16px; }
-
     .toast { position: fixed; bottom: 24px; right: 24px; background: var(--green); color: #fff; padding: 12px 20px; border-radius: 8px; z-index: 2000; animation: slideUp 0.3s ease; }
     @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
-
     .level-bar { background: var(--border); border-radius: 10px; height: 8px; overflow: hidden; }
     .level-fill { background: var(--accent); height: 100%; border-radius: 10px; transition: width 0.3s; }
     .chart-box { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px; }
     .empty-state { text-align: center; padding: 60px 20px; color: var(--muted); }
     .empty-state i { font-size: 3rem; margin-bottom: 16px; }
-    .hosting-indicator { display: flex; align-items: center; gap: 6px; font-size: 0.85rem; }
-    .pulse { width: 10px; height: 10px; border-radius: 50%; background: var(--green); animation: pulse 1.5s infinite; }
-    .pulse-off { background: var(--muted); animation: none; }
+    .status-dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
+    .status-online { background: var(--green); animation: pulse 1.5s infinite; }
+    .status-offline { background: var(--muted); }
     @keyframes pulse { 0%,100% { opacity:1; } 50% { opacity:0.3; } }
-
-    @media (max-width: 768px) {
-      .navbar { flex-direction: column; align-items: flex-start; }
-      .nav-links { gap: 12px; flex-wrap: wrap; }
-      .page-header { flex-direction: column; align-items: flex-start; }
-    }
+    @media (max-width: 768px) { .navbar { flex-direction: column; align-items: flex-start; } .nav-links { gap: 12px; flex-wrap: wrap; } .page-header { flex-direction: column; align-items: flex-start; } }
   </style>
 </head>
 <body>
   <nav class="navbar">
     <div class="logo" onclick="navigate('dashboard')"><i class="fa-solid fa-dharmachakra"></i>DevDock</div>
     <div class="nav-links">
-      <a href="#" data-page="dashboard" class="active">Дашборд</a>
+      <a href="#" data-page="dashboard" class="active">Проекты</a>
       <a href="#" data-page="tops">Топы</a>
       <a href="#" data-page="marketplace">Маркетплейс</a>
       <a href="#" data-page="profile">Профиль</a>
@@ -151,7 +106,7 @@
 
     let currentUser = null;
     let currentPage = 'dashboard';
-    let currentBotId = null;
+    let currentProjectId = null;
     let chartInstance = null;
 
     // ========== УТИЛИТЫ ==========
@@ -191,8 +146,8 @@
       overlay.addEventListener('click', e => { if (e.target === overlay) overlay.remove(); });
     }
 
-    window.navigate = (page, botId = null) => {
-      currentPage = page; currentBotId = botId;
+    window.navigate = (page, projectId = null) => {
+      currentPage = page; currentProjectId = projectId;
       document.querySelectorAll('.nav-links a').forEach(a => a.classList.remove('active'));
       const link = document.querySelector(`.nav-links a[data-page="${page}"]`);
       if (link) link.classList.add('active');
@@ -211,18 +166,10 @@
       const data = snap.val();
       const updates = {};
       if (delta.dkc) updates.dkc = (data.dkc || 0) + delta.dkc;
-      if (delta.xp) {
-        updates.xp = (data.xp || 0) + delta.xp;
-        const newLevel = Math.floor(updates.xp / 100) + 1;
-        if (newLevel > (data.level || 1)) updates.level = newLevel;
-      }
+      if (delta.xp) { updates.xp = (data.xp || 0) + delta.xp; const newLevel = Math.floor(updates.xp / 100) + 1; if (newLevel > (data.level || 1)) updates.level = newLevel; }
       await update(userRef, updates);
       if (delta.dkc && delta.description) {
-        await addDoc(collection(firestore, `transactions/${currentUser.uid}/items`), {
-          amount: delta.dkc,
-          description: delta.description,
-          createdAt: new Date()
-        });
+        await addDoc(collection(firestore, `transactions/${currentUser.uid}/items`), { amount: delta.dkc, description: delta.description, createdAt: new Date() });
       }
     }
 
@@ -233,7 +180,8 @@
       if (user) {
         menuEl.innerHTML = `<span style="font-weight:500;">${user.displayName||user.email}</span>
           <img src="${user.photoURL||''}" alt="avatar" referrerpolicy="no-referrer" />
-          <button id="logoutBtn"><i class="fa-solid fa-right-from-bracket"></i></button>`;
+          <button id="logoutBtn"><i class="fa-solid fa-right-from-bracket"></i></button>
+          ${user.email === 'admin@devdock.ru' ? '<button class="btn btn-sm btn-outline" onclick="navigate(\'admin\')">Админ</button>' : ''}`;
         document.getElementById('logoutBtn').onclick = () => signOut(auth);
         const userRef = ref(rtdb, `users/${user.uid}`);
         const snap = await get(userRef);
@@ -241,9 +189,8 @@
           await set(userRef, {
             email: user.email, displayName: user.displayName, photoURL: user.photoURL,
             username: '', bio: '', level: 1, xp: 0, dkc: 100,
-            totalUsers: 0, totalBots: 0, badges: {}, role: 'user',
-            referralCode: user.uid.substring(0, 6),
-            createdAt: serverTimestamp()
+            totalUsers: 0, totalProjects: 0, badges: {}, role: 'user',
+            referralCode: user.uid.substring(0, 6), createdAt: serverTimestamp()
           });
         }
         renderPage();
@@ -258,8 +205,8 @@
       document.getElementById('app').innerHTML = `
         <div style="text-align:center;padding:100px 20px;">
           <h1 style="font-size:3rem;"><i class="fa-solid fa-dharmachakra" style="color:var(--accent);"></i> DevDock</h1>
-          <p style="font-size:1.2rem; color:var(--muted); max-width:500px; margin:16px auto;">
-            Хостинг Telegram ботов с конструктором, статистикой, топами и маркетплейсом.
+          <p style="font-size:1.2rem; color:var(--muted); max-width:600px; margin:16px auto;">
+            Управление, статистика и аналитика для Telegram-ботов и веб-сайтов. Следите за ростом в реальном времени.
           </p>
           <div style="display:flex; gap:12px; justify-content:center; margin-top:24px; flex-wrap:wrap;">
             <button class="btn btn-google" id="loginGoogle"><i class="fa-brands fa-google"></i> Google</button>
@@ -270,14 +217,13 @@
       document.getElementById('loginGithub').onclick = () => signInWithPopup(auth, new GithubAuthProvider());
     }
 
-    // ========== РЕНДЕРИНГ СТРАНИЦ ==========
     function renderPage() {
       if (!currentUser) { renderLanding(); return; }
       document.querySelector('.nav-links').style.visibility = 'visible';
       const container = document.getElementById('app');
       switch(currentPage) {
         case 'dashboard': renderDashboard(container); break;
-        case 'botDetail': renderBotDetail(container); break;
+        case 'projectDetail': renderProjectDetail(container); break;
         case 'tops': renderTops(container); break;
         case 'marketplace': renderMarketplace(container); break;
         case 'profile': renderProfile(container); break;
@@ -290,163 +236,175 @@
     function renderDashboard(container) {
       container.innerHTML = `
         <div class="page-header">
-          <h2><i class="fa-solid fa-robot"></i> Мои боты</h2>
-          <button class="btn btn-primary" id="createBotBtn"><i class="fa-solid fa-plus"></i> Создать бота</button>
+          <h2><i class="fa-solid fa-folder-open"></i> Мои проекты</h2>
+          <button class="btn btn-primary" id="addProjectBtn"><i class="fa-solid fa-plus"></i> Добавить проект</button>
         </div>
-        <div class="grid" id="botsGrid"></div>`;
-      document.getElementById('createBotBtn').onclick = () => {
-        modal('Новый Telegram бот', [
-          {label:'Название', id:'name', placeholder:'Мой супер-бот'},
-          {label:'Токен (@BotFather)', id:'token', placeholder:'123456:ABC...'},
-          {label:'Описание', id:'desc', type:'textarea'},
-          {label:'Категория', id:'cat', type:'select', options:['Игры','Утилиты','Бизнес','Развлечения','Образование','Другое']}
+        <div class="grid" id="projectsGrid"></div>`;
+
+      document.getElementById('addProjectBtn').onclick = () => {
+        modal('Новый проект', [
+          {label:'Название', id:'name', placeholder:'Мой бот или сайт'},
+          {label:'Тип', id:'type', type:'select', options:['🤖 Telegram бот', '🌐 Веб-сайт']},
+          {label:'Токен (только для ботов)', id:'token', placeholder:'123456:ABC...'},
+          {label:'Описание', id:'desc', type:'textarea'}
         ], async (vals) => {
-          if (!vals.name || !vals.token) return toast('Заполните поля', 'error');
-          const info = await checkBotToken(vals.token);
-          if (!info) return toast('Неверный токен', 'error');
-          const botRef = push(ref(rtdb, `bots/${currentUser.uid}`));
-          await set(botRef, {
-            name: vals.name, token: vals.token, description: vals.desc, category: vals.cat,
-            botUsername: info.username, botFirstName: info.first_name, botId: info.id,
-            commands: [], autoReply: null, stats: { users: 0, messages: 0 },
-            active: false, pollingOffset: 0, createdAt: serverTimestamp()
+          if (!vals.name) return toast('Введите название', 'error');
+          let botInfo = null;
+          if (vals.type === '🤖 Telegram бот' && vals.token) {
+            botInfo = await checkBotToken(vals.token);
+            if (!botInfo) return toast('Неверный токен', 'error');
+          }
+          const projectRef = push(ref(rtdb, `projects/${currentUser.uid}`));
+          const apiKey = 'dk_' + Math.random().toString(36).substring(2, 18);
+          await set(projectRef, {
+            name: vals.name, type: vals.type, token: vals.token || null,
+            description: vals.desc, apiKey,
+            botUsername: botInfo?.username || null, botFirstName: botInfo?.first_name || null,
+            commands: [], stats: { users: 0, messages: 0, daily: {} },
+            status: 'offline', lastPing: null, createdAt: serverTimestamp()
           });
-          await modifyUser({ dkc: 50, xp: 10, description: 'Создание бота' });
-          toast(`Бот @${info.username} создан! +50 DKC`);
+          await modifyUser({ dkc: 50, xp: 10, description: 'Создание проекта' });
+          toast(`Проект создан! +50 DKC`);
         });
       };
 
-      onValue(ref(rtdb, `bots/${currentUser.uid}`), snap => {
-        const grid = document.getElementById('botsGrid');
+      onValue(ref(rtdb, `projects/${currentUser.uid}`), snap => {
+        const grid = document.getElementById('projectsGrid');
         const data = snap.val();
-        if (!data) { grid.innerHTML = '<div class="empty-state"><i class="fa-solid fa-robot"></i><p>Нет ботов</p></div>'; return; }
-        grid.innerHTML = Object.entries(data).map(([id, b]) => `
-          <div class="card" style="cursor:pointer;" onclick="navigate('botDetail','${id}')">
+        if (!data) { grid.innerHTML = '<div class="empty-state"><i class="fa-solid fa-folder-open"></i><p>Нет проектов</p></div>'; return; }
+        grid.innerHTML = Object.entries(data).map(([id, p]) => `
+          <div class="card" style="cursor:pointer;" onclick="navigate('projectDetail','${id}')">
             <div style="display:flex; justify-content:space-between; align-items:start;">
-              <h3>${b.name}</h3>
-              <span class="badge ${b.active?'badge-success':'badge-warning'}">${b.active?'24/7 Активен':'Остановлен'}</span>
+              <h3>${p.type==='🌐 Веб-сайт' ? '🌐' : '🤖'} ${p.name}</h3>
+              <span class="status-dot ${p.status==='online'?'status-online':'status-offline'}"></span>
             </div>
-            <p>@${b.botUsername}</p>
-            <p style="color:var(--muted); font-size:0.85rem;">${b.description||''}</p>
+            <p style="color:var(--muted); font-size:0.85rem;">${p.description||''}</p>
             <div style="margin-top:8px; display:flex; gap:12px; color:var(--muted); font-size:0.8rem;">
-              <span><i class="fa-solid fa-users"></i> ${b.stats?.users||0}</span>
-              <span><i class="fa-solid fa-comment"></i> ${b.stats?.messages||0}</span>
+              <span><i class="fa-solid fa-users"></i> ${p.stats?.users||0}</span>
+              <span><i class="fa-solid fa-comment"></i> ${p.stats?.messages||0}</span>
             </div>
-          </div>
-        `).join('');
+          </div>`).join('');
       });
     }
 
-    // ========== BOT DETAIL ==========
-    function renderBotDetail(container) {
-      const botRef = ref(rtdb, `bots/${currentUser.uid}/${currentBotId}`);
-      get(botRef).then(snap => {
-        const bot = snap.val();
-        if (!bot) { toast('Бот не найден'); navigate('dashboard'); return; }
+    // ========== PROJECT DETAIL ==========
+    function renderProjectDetail(container) {
+      const projectRef = ref(rtdb, `projects/${currentUser.uid}/${currentProjectId}`);
+      get(projectRef).then(snap => {
+        const project = snap.val();
+        if (!project) { toast('Проект не найден'); navigate('dashboard'); return; }
         container.innerHTML = `
           <div class="page-header">
-            <h2><i class="fa-solid fa-arrow-left" onclick="navigate('dashboard')" style="cursor:pointer;"></i> ${bot.name}</h2>
-            <div style="display:flex; align-items:center; gap:12px; flex-wrap:wrap;">
-              <div class="hosting-indicator">
-                <div class="pulse ${bot.active?'':'pulse-off'}"></div>
-                <span>${bot.active?'Хостинг 24/7 работает':'Хостинг остановлен'}</span>
-              </div>
-              <button class="btn btn-sm ${bot.active?'btn-danger':'btn-success'}" id="toggleBtn">
-                <i class="fa-solid ${bot.active?'fa-stop':'fa-play'}"></i> ${bot.active?'Остановить':'Запустить 24/7'}
-              </button>
+            <h2><i class="fa-solid fa-arrow-left" onclick="navigate('dashboard')" style="cursor:pointer;"></i> ${project.name}</h2>
+            <div>
               <button class="btn btn-sm btn-outline" id="editBtn"><i class="fa-solid fa-pen"></i></button>
               <button class="btn btn-sm btn-danger" id="deleteBtn"><i class="fa-solid fa-trash"></i></button>
             </div>
           </div>
           <div class="tabs">
-            <div class="tab active" data-tab="commands">Команды</div>
-            <div class="tab" data-tab="autoreply">Автоответчик</div>
+            <div class="tab active" data-tab="overview">Обзор</div>
+            ${project.type === '🤖 Telegram бот' ? '<div class="tab" data-tab="commands">Команды</div>' : ''}
             <div class="tab" data-tab="stats">Статистика</div>
+            <div class="tab" data-tab="integration">Интеграция</div>
           </div>
           <div id="tabContent"></div>`;
 
         const tabContent = document.getElementById('tabContent');
         const tabs = document.querySelectorAll('.tab');
-        let currentTab = 'commands';
+        let currentTab = 'overview';
 
         function switchTab(tab) {
           currentTab = tab;
           tabs.forEach(t => t.classList.remove('active'));
           document.querySelector(`[data-tab="${tab}"]`).classList.add('active');
-          if (tab === 'commands') renderCommands();
-          else if (tab === 'autoreply') renderAutoReply();
+          if (tab === 'overview') renderOverview();
+          else if (tab === 'commands') renderCommands();
           else if (tab === 'stats') renderStats();
+          else if (tab === 'integration') renderIntegration();
         }
         tabs.forEach(t => t.addEventListener('click', () => switchTab(t.dataset.tab)));
 
+        function renderOverview() {
+          tabContent.innerHTML = `
+            <div class="card"><strong>Тип:</strong> ${project.type}</div>
+            <div class="card"><strong>Статус:</strong> <span class="status-dot ${project.status==='online'?'status-online':'status-offline'}"></span> ${project.status==='online'?'Онлайн':'Офлайн'}</div>
+            <div class="card"><strong>Пользователей:</strong> ${project.stats?.users||0}</div>
+            <div class="card"><strong>Сообщений:</strong> ${project.stats?.messages||0}</div>
+            ${project.lastPing ? `<div class="card"><strong>Последняя активность:</strong> ${formatDate(project.lastPing)}</div>` : ''}`;
+        }
+
         function renderCommands() {
-          const cmds = bot.commands || [];
+          const cmds = project.commands || [];
           tabContent.innerHTML = `
             <button class="btn btn-sm btn-primary" id="addCmd"><i class="fa-solid fa-plus"></i> Добавить</button>
-            <div style="margin-top:12px;">${cmds.length===0?'<p class="empty-state">Нет команд</p>':cmds.map((c,i)=>`<div class="card" style="margin-bottom:8px;"><strong>/${c.command}</strong> → ${c.response||'...'} <button class="btn btn-xs btn-danger" data-idx="${i}"><i class="fa-solid fa-trash"></i></button></div>`).join('')}</div>`;
+            <div style="margin-top:12px;">${cmds.length===0?'<p class="empty-state">Нет команд</p>':cmds.map((c,i)=>`<div class="card"><strong>/${c.command}</strong> → ${c.response||'...'} <button class="btn btn-xs btn-danger" data-idx="${i}"><i class="fa-solid fa-trash"></i></button></div>`).join('')}</div>`;
           document.getElementById('addCmd').onclick = () => modal('Новая команда', [
             {label:'Команда', id:'cmd', placeholder:'start'},
-            {label:'Ответ', id:'resp', type:'textarea', placeholder:'Привет!'}
+            {label:'Ответ', id:'resp', type:'textarea'}
           ], async v => {
             if (!v.cmd) return;
-            await update(botRef, { commands: [...cmds, {command:v.cmd, response:v.resp}] });
+            await update(projectRef, { commands: [...cmds, {command:v.cmd, response:v.resp}] });
             toast('Добавлено'); switchTab('commands');
           });
           document.querySelectorAll('[data-idx]').forEach(b => b.onclick = async () => {
-            const idx = parseInt(b.dataset.idx);
-            cmds.splice(idx, 1);
-            await update(botRef, { commands: cmds });
+            cmds.splice(parseInt(b.dataset.idx), 1);
+            await update(projectRef, { commands: cmds });
             toast('Удалено'); switchTab('commands');
           });
-        }
-
-        function renderAutoReply() {
-          tabContent.innerHTML = `<label>Автоответ на любое сообщение</label><textarea id="arText" rows="3">${bot.autoReply||''}</textarea><button class="btn btn-sm btn-primary" id="saveAr" style="margin-top:8px;">Сохранить</button>`;
-          document.getElementById('saveAr').onclick = async () => {
-            await update(botRef, { autoReply: document.getElementById('arText').value.trim() || null });
-            toast('Сохранено');
-          };
         }
 
         function renderStats() {
           tabContent.innerHTML = `
             <div class="chart-box"><canvas id="statsChart"></canvas></div>
-            <div style="margin-top:16px;"><strong>👥 ${bot.stats?.users||0}</strong> пользователей | <strong>💬 ${bot.stats?.messages||0}</strong> сообщений</div>`;
+            <div style="margin-top:16px;"><strong>👥 ${project.stats?.users||0}</strong> пользователей | <strong>💬 ${project.stats?.messages||0}</strong> сообщений</div>`;
           if (chartInstance) chartInstance.destroy();
           const ctx = document.getElementById('statsChart').getContext('2d');
           chartInstance = new Chart(ctx, {
             type: 'line',
-            data: { labels: ['Пн','Вт','Ср','Чт','Пт','Сб','Вс'], datasets: [{ label: 'Новые', data: [0,0,0,0,0,0,0], borderColor: '#58a6ff', tension:0.3 }] },
+            data: { labels: ['Пн','Вт','Ср','Чт','Пт','Сб','Вс'], datasets: [{ label: 'Активность', data: [0,0,0,0,0,0,0], borderColor: '#58a6ff', tension:0.3 }] },
             options: { scales: { y: { beginAtZero: true } } }
           });
         }
 
-        document.getElementById('toggleBtn').onclick = async () => {
-          const newActive = !bot.active;
-          await update(botRef, { active: newActive });
-          toast(newActive ? '🚀 Хостинг 24/7 запущен' : 'Бот остановлен');
-          renderBotDetail(container);
-        };
+        function renderIntegration() {
+          tabContent.innerHTML = `
+            <div class="card">
+              <h4>API-ключ</h4>
+              <code>${project.apiKey}</code>
+            </div>
+            <div class="card">
+              <h4>Как отправлять статистику</h4>
+              <pre style="background:var(--bg);padding:12px;border-radius:6px;overflow-x:auto;">fetch('https://YOUR_FUNCTION_URL/api/stats', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ${project.apiKey}' },
+  body: JSON.stringify({
+    event: 'message' | 'new_user' | 'command',
+    data: { userId: '...', ... }
+  })
+});</pre>
+            </div>`;
+        }
+
         document.getElementById('editBtn').onclick = () => modal('Редактировать', [
-          {label:'Название', id:'name', value:bot.name},
-          {label:'Описание', id:'desc', type:'textarea', value:bot.description||''}
-        ], async v => { await update(botRef, { name: v.name, description: v.desc }); toast('Сохранено'); renderBotDetail(container); });
+          {label:'Название', id:'name', value:project.name},
+          {label:'Описание', id:'desc', type:'textarea', value:project.description||''}
+        ], async v => { await update(projectRef, { name: v.name, description: v.desc }); toast('Сохранено'); renderProjectDetail(container); });
         document.getElementById('deleteBtn').onclick = async () => {
-          if (confirm('Удалить бота?')) { await remove(botRef); toast('Удалён'); navigate('dashboard'); }
+          if (confirm('Удалить проект?')) { await remove(projectRef); toast('Удалён'); navigate('dashboard'); }
         };
 
-        switchTab('commands');
+        switchTab('overview');
       });
     }
 
     // ========== TOPS ==========
     function renderTops(container) {
-      container.innerHTML = `<h2><i class="fa-solid fa-trophy"></i> Топ ботов</h2><div class="grid" id="topBots"></div>
+      container.innerHTML = `<h2><i class="fa-solid fa-trophy"></i> Топ проектов</h2><div class="grid" id="topProjects"></div>
         <h2 style="margin-top:32px;"><i class="fa-solid fa-user-tie"></i> Топ разработчиков</h2><div class="grid" id="topDevs"></div>`;
-      onValue(ref(rtdb, 'bots'), snap => {
-        const bots = []; snap.forEach(u => u.forEach(b => bots.push({...b.val(), uid: u.key})));
-        bots.sort((a,b) => (b.stats?.users||0) - (a.stats?.users||0));
-        document.getElementById('topBots').innerHTML = bots.slice(0,10).map((b,i) => `<div class="card">${i+1}. @${b.botUsername} — ${b.stats?.users||0} 👥</div>`).join('');
+      onValue(ref(rtdb, 'projects'), snap => {
+        const projects = []; snap.forEach(u => u.forEach(p => projects.push({...p.val(), uid: u.key})));
+        projects.sort((a,b) => (b.stats?.users||0) - (a.stats?.users||0));
+        document.getElementById('topProjects').innerHTML = projects.slice(0,10).map((p,i) => `<div class="card">${i+1}. ${p.name} — ${p.stats?.users||0} 👥</div>`).join('');
       });
       onValue(ref(rtdb, 'users'), snap => {
         const devs = []; snap.forEach(u => { const d = u.val(); if(d.totalUsers) devs.push({name: d.displayName||d.email, users: d.totalUsers}); });
@@ -475,36 +433,32 @@
         <div class="card" style="max-width:600px;">
           <div style="text-align:center;">
             <img src="${currentUser.photoURL}" style="width:80px; border-radius:50%;" />
-            <h3>${currentUser.displayName}</h3>
-            <p>@${u.username||'нет'}</p>
-            <p>${u.bio||''}</p>
+            <h3>${currentUser.displayName}</h3><p>@${u.username||'нет'}</p><p>${u.bio||''}</p>
             <p>⭐ Уровень ${u.level||1} (${u.xp||0} XP)</p>
             <div class="level-bar"><div class="level-fill" style="width:${(u.xp%100)}%"></div></div>
-            <p style="margin-top:8px;">💰 Баланс: <strong>${u.dkc||0} DKC</strong></p>
+            <p style="margin-top:8px;">💰 <strong>${u.dkc||0} DKC</strong></p>
             <button class="btn btn-sm btn-outline" onclick="editProfile()">Редактировать</button>
           </div>
           <h4 style="margin-top:16px;">🏅 Бейджи</h4>
           <div>${Object.keys(u.badges||{}).map(b=>`<span class="badge badge-accent">${b}</span>`).join(' ')||'Нет'}</div>
-          <h4 style="margin-top:16px;">👥 Реферальная система</h4>
-          <p>Ваш код: <strong>${u.referralCode||''}</strong></p>
+          <h4 style="margin-top:16px;">👥 Рефералы</h4>
+          <p>Код: <strong>${u.referralCode||''}</strong></p>
           <p>Приглашено: ${u.referralCount||0} чел.</p>
-          <button class="btn btn-sm btn-primary" id="activatePromo">Активировать промокод</button>
+          <button class="btn btn-sm btn-primary" id="activatePromo">Промокод</button>
         </div>
         <h3 style="margin-top:24px;">История транзакций</h3>
         <div id="txList"></div>`;
 
       document.getElementById('activatePromo').onclick = () => {
         modal('Промокод', [{label:'Код', id:'code', placeholder:'XXX-XXX'}], async v => {
-          const promoRef = ref(rtdb, `promocodes/${v.code}`);
-          const promoSnap = await get(promoRef);
-          if (!promoSnap.exists()) return toast('Промокод не найден', 'error');
+          const promoSnap = await get(ref(rtdb, `promocodes/${v.code}`));
+          if (!promoSnap.exists()) return toast('Не найден', 'error');
           const promo = promoSnap.val();
-          if (promo.usedCount >= promo.maxUses) return toast('Лимит использований', 'error');
+          if (promo.usedCount >= promo.maxUses) return toast('Лимит', 'error');
           if (promo.expiresAt && Date.now() > promo.expiresAt) return toast('Истёк', 'error');
-          await update(promoRef, { usedCount: (promo.usedCount||0) + 1 });
+          await update(ref(rtdb, `promocodes/${v.code}`), { usedCount: (promo.usedCount||0) + 1 });
           await modifyUser({ dkc: promo.value, description: 'Промокод' });
-          toast(`+${promo.value} DKC по промокоду!`);
-          renderPage();
+          toast(`+${promo.value} DKC!`); renderPage();
         });
       };
 
@@ -526,8 +480,86 @@
       });
     };
 
-    function renderAdmin(container) {
-      container.innerHTML = `<h2>🛡️ Админ-панель</h2><p>Только для администраторов.</p>`;
+    // ========== ADMIN PANEL ==========
+    async function renderAdmin(container) {
+      const uSnap = await get(ref(rtdb, `users/${currentUser.uid}`));
+      const u = uSnap.val();
+      if (u.role !== 'admin') { toast('Нет доступа', 'error'); navigate('dashboard'); return; }
+
+      container.innerHTML = `<h2>🛡️ Админ-панель</h2>
+        <div class="tabs">
+          <div class="tab active" data-atab="users">Пользователи</div>
+          <div class="tab" data-atab="projects">Проекты</div>
+          <div class="tab" data-atab="promocodes">Промокоды</div>
+        </div>
+        <div id="adminContent"></div>`;
+
+      const adminTabs = document.querySelectorAll('[data-atab]');
+      const adminContent = document.getElementById('adminContent');
+
+      function switchAdminTab(tab) {
+        adminTabs.forEach(t => t.classList.remove('active'));
+        document.querySelector(`[data-atab="${tab}"]`).classList.add('active');
+        if (tab === 'users') renderAdminUsers();
+        else if (tab === 'projects') renderAdminProjects();
+        else if (tab === 'promocodes') renderAdminPromocodes();
+      }
+      adminTabs.forEach(t => t.addEventListener('click', () => switchAdminTab(t.dataset.atab)));
+
+      function renderAdminUsers() {
+        adminContent.innerHTML = '<div class="grid" id="adminUsersGrid"></div>';
+        onValue(ref(rtdb, 'users'), snap => {
+          const users = []; snap.forEach(u => users.push({ uid: u.key, ...u.val() }));
+          document.getElementById('adminUsersGrid').innerHTML = users.map(u => `
+            <div class="card">
+              <img src="${u.photoURL}" style="width:32px;border-radius:50%;vertical-align:middle;" /> ${u.displayName||u.email}
+              <p>Роль: ${u.role||'user'} | DKC: ${u.dkc||0} | LVL: ${u.level||1}</p>
+              <button class="btn btn-xs btn-success" onclick="setRole('${u.uid}','admin')">Админ</button>
+              <button class="btn btn-xs btn-warning" onclick="setRole('${u.uid}','user')">Юзер</button>
+              <button class="btn btn-xs btn-danger" onclick="banUser('${u.uid}')">Бан</button>
+            </div>`).join('');
+        });
+      }
+
+      function renderAdminProjects() {
+        adminContent.innerHTML = '<div class="grid" id="adminProjectsGrid"></div>';
+        onValue(ref(rtdb, 'projects'), snap => {
+          const projects = []; snap.forEach(u => u.forEach(p => projects.push({ uid: u.key, pid: p.key, ...p.val() })));
+          document.getElementById('adminProjectsGrid').innerHTML = projects.map(p => `
+            <div class="card">
+              <h4>${p.name}</h4><p>@${p.botUsername||'сайт'}</p>
+              <p>👥 ${p.stats?.users||0} | 💬 ${p.stats?.messages||0}</p>
+              <button class="btn btn-xs btn-danger" onclick="deleteProject('${p.uid}','${p.pid}')">Удалить</button>
+            </div>`).join('');
+        });
+      }
+
+      function renderAdminPromocodes() {
+        adminContent.innerHTML = `
+          <button class="btn btn-sm btn-primary" id="createPromoBtn">Создать промокод</button>
+          <div class="grid" id="promoGrid"></div>`;
+        document.getElementById('createPromoBtn').onclick = () => modal('Промокод', [
+          {label:'Код', id:'code', placeholder:'WELCOME'},
+          {label:'Сумма DKC', id:'value', placeholder:'100'},
+          {label:'Макс. использований', id:'max', placeholder:'50'}
+        ], async v => {
+          await set(ref(rtdb, `promocodes/${v.code}`), { value: parseInt(v.value), maxUses: parseInt(v.max), usedCount: 0, createdAt: serverTimestamp() });
+          toast('Создан'); switchAdminTab('promocodes');
+        });
+        onValue(ref(rtdb, 'promocodes'), snap => {
+          const codes = []; snap.forEach(c => codes.push({ code: c.key, ...c.val() }));
+          document.getElementById('promoGrid').innerHTML = codes.map(c => `
+            <div class="card"><h4>${c.code}</h4><p>${c.value} DKC | ${c.usedCount||0}/${c.maxUses}</p>
+              <button class="btn btn-xs btn-danger" onclick="deletePromo('${c.code}')">Удалить</button></div>`).join('');
+        });
+      }
+
+      window.setRole = async (uid, role) => { await update(ref(rtdb, `users/${uid}`), { role }); toast('Роль обновлена'); };
+      window.banUser = async (uid) => { if(confirm('Забанить?')) { await update(ref(rtdb, `users/${uid}`), { banned: true }); toast('Забанен'); } };
+      window.deleteProject = async (uid, pid) => { if(confirm('Удалить?')) { await remove(ref(rtdb, `projects/${uid}/${pid}`)); toast('Удалён'); } };
+      window.deletePromo = async (code) => { if(confirm('Удалить?')) { await remove(ref(rtdb, `promocodes/${code}`)); toast('Удалён'); } };
+
+      switchAdminTab('users');
     }
 
     onAuthStateChanged(auth, handleUser);
