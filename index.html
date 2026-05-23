@@ -3,11 +3,10 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-  <title>DevDock — Хостинг и конструктор Telegram ботов</title>
+  <title>DevDock — Хостинг и конструктор Telegram ботов 24/7</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
   <style>
-    /* ========== CSS Variables & Reset ========== */
     :root {
       --bg: #0d1117;
       --card: #161b22;
@@ -32,7 +31,6 @@
     a { color: var(--accent); text-decoration: none; }
     a:hover { text-decoration: underline; }
 
-    /* ========== Navbar ========== */
     .navbar {
       background: var(--card); border-bottom: 1px solid var(--border);
       padding: 14px 24px; display: flex; align-items: center; justify-content: space-between;
@@ -48,12 +46,10 @@
     .user-menu button { background: transparent; color: var(--text); border: 1px solid var(--border); padding: 8px 14px; border-radius: 6px; cursor: pointer; transition: 0.2s; }
     .user-menu button:hover { background: #1f2937; }
 
-    /* ========== Layout ========== */
     .container { max-width: 1280px; margin: 0 auto; padding: 24px 20px; width: 100%; flex: 1; }
     .page-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; flex-wrap: wrap; gap: 12px; }
     .page-header h2 { font-size: 1.8rem; display: flex; align-items: center; gap: 10px; }
 
-    /* ========== Buttons ========== */
     .btn {
       display: inline-flex; align-items: center; justify-content: center; gap: 8px;
       padding: 10px 20px; font-size: 0.9rem; font-weight: 600; border-radius: 6px;
@@ -74,18 +70,14 @@
     .btn-sm { padding: 6px 12px; font-size: 0.8rem; }
     .btn-xs { padding: 4px 8px; font-size: 0.7rem; }
 
-    /* ========== Cards & Grids ========== */
     .card { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px; transition: all 0.2s; }
     .card:hover { border-color: var(--accent); box-shadow: var(--shadow); }
     .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px; }
-    .grid-sm { grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); }
 
-    /* ========== Tabs ========== */
     .tabs { display: flex; gap: 8px; margin-bottom: 20px; flex-wrap: wrap; }
     .tab { padding: 8px 16px; background: var(--card); border: 1px solid var(--border); border-radius: 6px; cursor: pointer; font-size: 0.9rem; }
     .tab.active { background: var(--accent); border-color: var(--accent); color: #fff; }
 
-    /* ========== Forms ========== */
     input, textarea, select {
       width: 100%; padding: 10px 12px; background: var(--bg); border: 1px solid var(--border);
       border-radius: 6px; color: var(--text); font-size: 0.9rem; outline: none; transition: border 0.2s;
@@ -93,49 +85,38 @@
     input:focus, textarea:focus, select:focus { border-color: var(--accent); }
     label { display: block; font-size: 0.85rem; color: var(--muted); margin-bottom: 4px; }
 
-    /* ========== Badges & Tags ========== */
     .badge { display: inline-block; padding: 2px 8px; border-radius: 12px; font-size: 0.7rem; font-weight: 600; }
     .badge-success { background: var(--green); color: #fff; }
     .badge-danger { background: var(--red); color: #fff; }
     .badge-warning { background: var(--orange); color: #000; }
     .badge-accent { background: var(--accent); color: #fff; }
 
-    /* ========== Modal ========== */
     .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.7); display: flex; align-items: center; justify-content: center; z-index: 1000; }
     .modal { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 24px; width: 90%; max-width: 520px; max-height: 90vh; overflow-y: auto; }
     .modal h3 { margin-bottom: 16px; }
     .modal .actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 16px; }
 
-    /* ========== Toast ========== */
     .toast { position: fixed; bottom: 24px; right: 24px; background: var(--green); color: #fff; padding: 12px 20px; border-radius: 8px; z-index: 2000; animation: slideUp 0.3s ease; }
     @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
 
-    /* ========== Level bar ========== */
     .level-bar { background: var(--border); border-radius: 10px; height: 8px; overflow: hidden; }
     .level-fill { background: var(--accent); height: 100%; border-radius: 10px; transition: width 0.3s; }
-
-    /* ========== Chart container ========== */
     .chart-box { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px; }
-
-    /* ========== Empty state ========== */
     .empty-state { text-align: center; padding: 60px 20px; color: var(--muted); }
     .empty-state i { font-size: 3rem; margin-bottom: 16px; }
+    .hosting-indicator { display: flex; align-items: center; gap: 6px; font-size: 0.85rem; }
+    .pulse { width: 10px; height: 10px; border-radius: 50%; background: var(--green); animation: pulse 1.5s infinite; }
+    .pulse-off { background: var(--muted); animation: none; }
+    @keyframes pulse { 0%,100% { opacity:1; } 50% { opacity:0.3; } }
 
-    /* ========== Responsive ========== */
     @media (max-width: 768px) {
       .navbar { flex-direction: column; align-items: flex-start; }
       .nav-links { gap: 12px; flex-wrap: wrap; }
       .page-header { flex-direction: column; align-items: flex-start; }
     }
-
-    /* ========== Scrollbar ========== */
-    ::-webkit-scrollbar { width: 6px; }
-    ::-webkit-scrollbar-track { background: var(--bg); }
-    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
   </style>
 </head>
 <body>
-  <!-- Navbar -->
   <nav class="navbar">
     <div class="logo" onclick="navigate('dashboard')"><i class="fa-solid fa-dharmachakra"></i>DevDock</div>
     <div class="nav-links">
@@ -146,19 +127,14 @@
     </div>
     <div class="user-menu" id="userMenu"></div>
   </nav>
-
-  <!-- Main App Container -->
   <div class="container" id="app"><div class="empty-state"><i class="fa-solid fa-spinner fa-pulse"></i><p>Загрузка...</p></div></div>
 
-  <!-- Firebase SDK -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
     import { getAuth, signInWithPopup, GoogleAuthProvider, GithubAuthProvider, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-    import { getDatabase, ref, set, push, onValue, remove, serverTimestamp, update, get, child } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
-    import { getFirestore, collection, addDoc, query, orderBy, limit, onSnapshot, doc, updateDoc, deleteDoc, getDocs, where, serverTimestamp as fsTimestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
-    import { getStorage, ref as sRef, uploadBytesResumable, getDownloadURL, listAll, deleteObject } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-storage.js";
+    import { getDatabase, ref, set, push, onValue, remove, serverTimestamp, update, get } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+    import { getFirestore, collection, addDoc, query, orderBy, limit, onSnapshot, doc as fsDoc, updateDoc, deleteDoc, getDocs, where } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-    // Firebase config (замени на свой при необходимости)
     const firebaseConfig = {
       apiKey: "AIzaSyCQlvzosVihEhlF2W-jE2DcYViqHXwT4YM",
       authDomain: "devdock-5cb61.firebaseapp.com",
@@ -172,22 +148,17 @@
     const auth = getAuth(app);
     const rtdb = getDatabase(app);
     const firestore = getFirestore(app);
-    const storage = getStorage(app);
 
-    // ========== GLOBAL STATE ==========
     let currentUser = null;
     let currentPage = 'dashboard';
     let currentBotId = null;
-    let currentTab = 'commands'; // для деталей бота
+    let chartInstance = null;
 
-    // ========== UTILS ==========
-    function toast(msg, type='success') {
-      const t = document.createElement('div');
-      t.className = 'toast';
+    // ========== УТИЛИТЫ ==========
+    function toast(msg, type = 'success') {
+      const t = document.createElement('div'); t.className = 'toast';
       t.style.background = type === 'error' ? 'var(--red)' : 'var(--green)';
-      t.textContent = msg;
-      document.body.appendChild(t);
-      setTimeout(() => t.remove(), 3000);
+      t.textContent = msg; document.body.appendChild(t); setTimeout(() => t.remove(), 3000);
     }
 
     function formatDate(ts) {
@@ -197,14 +168,12 @@
     }
 
     function modal(title, fields, cb) {
-      const overlay = document.createElement('div');
-      overlay.className = 'modal-overlay';
+      const overlay = document.createElement('div'); overlay.className = 'modal-overlay';
       const formHtml = fields.map(f => {
         if (f.type === 'custom') return f.html;
         let inputHtml = '';
         if (f.type === 'textarea') inputHtml = `<textarea id="modal_${f.id}" placeholder="${f.placeholder||''}" rows="3">${f.value||''}</textarea>`;
         else if (f.type === 'select') inputHtml = `<select id="modal_${f.id}">${f.options.map(o => `<option value="${o}" ${o===f.value?'selected':''}>${o}</option>`).join('')}</select>`;
-        else if (f.type === 'file') inputHtml = `<input type="file" id="modal_${f.id}" />`;
         else inputHtml = `<input type="${f.type||'text'}" id="modal_${f.id}" placeholder="${f.placeholder||''}" value="${f.value||''}" />`;
         return `<label>${f.label||''}</label>${inputHtml}`;
       }).join('');
@@ -215,22 +184,47 @@
         const vals = {};
         fields.filter(f => f.type !== 'custom').forEach(f => {
           const el = document.getElementById(`modal_${f.id}`);
-          vals[f.id] = f.type === 'file' ? (el.files?.[0] || null) : (el?.value?.trim() || '');
+          vals[f.id] = el?.value?.trim() || '';
         });
-        overlay.remove();
-        if (cb) cb(vals);
+        overlay.remove(); if (cb) cb(vals);
       };
-      overlay.addEventListener('click', (e) => { if (e.target === overlay) overlay.remove(); });
+      overlay.addEventListener('click', e => { if (e.target === overlay) overlay.remove(); });
     }
 
-    // Навигация
     window.navigate = (page, botId = null) => {
-      currentPage = page;
-      currentBotId = botId;
+      currentPage = page; currentBotId = botId;
       document.querySelectorAll('.nav-links a').forEach(a => a.classList.remove('active'));
-      document.querySelector(`.nav-links a[data-page="${page}"]`)?.classList.add('active');
+      const link = document.querySelector(`.nav-links a[data-page="${page}"]`);
+      if (link) link.classList.add('active');
       if (currentUser) renderPage();
     };
+
+    async function checkBotToken(token) {
+      try { const r = await fetch(`https://api.telegram.org/bot${token}/getMe`); const d = await r.json(); return d.ok ? d.result : null; }
+      catch { return null; }
+    }
+
+    async function modifyUser(delta) {
+      const userRef = ref(rtdb, `users/${currentUser.uid}`);
+      const snap = await get(userRef);
+      if (!snap.exists()) return;
+      const data = snap.val();
+      const updates = {};
+      if (delta.dkc) updates.dkc = (data.dkc || 0) + delta.dkc;
+      if (delta.xp) {
+        updates.xp = (data.xp || 0) + delta.xp;
+        const newLevel = Math.floor(updates.xp / 100) + 1;
+        if (newLevel > (data.level || 1)) updates.level = newLevel;
+      }
+      await update(userRef, updates);
+      if (delta.dkc && delta.description) {
+        await addDoc(collection(firestore, `transactions/${currentUser.uid}/items`), {
+          amount: delta.dkc,
+          description: delta.description,
+          createdAt: new Date()
+        });
+      }
+    }
 
     // ========== AUTH ==========
     async function handleUser(user) {
@@ -241,20 +235,14 @@
           <img src="${user.photoURL||''}" alt="avatar" referrerpolicy="no-referrer" />
           <button id="logoutBtn"><i class="fa-solid fa-right-from-bracket"></i></button>`;
         document.getElementById('logoutBtn').onclick = () => signOut(auth);
-        // инициализация пользователя в RTDB
         const userRef = ref(rtdb, `users/${user.uid}`);
         const snap = await get(userRef);
         if (!snap.exists()) {
           await set(userRef, {
-            email: user.email,
-            displayName: user.displayName,
-            photoURL: user.photoURL,
-            username: '',
-            bio: '',
-            level: 1, xp: 0, dkc: 100, // стартовый бонус
-            totalUsers: 0, totalBots: 0,
-            badges: {},
-            role: 'user',
+            email: user.email, displayName: user.displayName, photoURL: user.photoURL,
+            username: '', bio: '', level: 1, xp: 0, dkc: 100,
+            totalUsers: 0, totalBots: 0, badges: {}, role: 'user',
+            referralCode: user.uid.substring(0, 6),
             createdAt: serverTimestamp()
           });
         }
@@ -265,17 +253,16 @@
       }
     }
 
-    // ========== LANDING ==========
     function renderLanding() {
       document.querySelector('.nav-links').style.visibility = 'hidden';
       document.getElementById('app').innerHTML = `
         <div style="text-align:center;padding:100px 20px;">
           <h1 style="font-size:3rem;"><i class="fa-solid fa-dharmachakra" style="color:var(--accent);"></i> DevDock</h1>
-          <p style="font-size:1.2rem; color:var(--muted); max-width:500px; margin: 16px auto;">
+          <p style="font-size:1.2rem; color:var(--muted); max-width:500px; margin:16px auto;">
             Хостинг Telegram ботов с конструктором, статистикой, топами и маркетплейсом.
           </p>
           <div style="display:flex; gap:12px; justify-content:center; margin-top:24px; flex-wrap:wrap;">
-            <button class="btn btn-google" id="loginGoogle"><i class="fa-brands fa-google"></i> Войти через Google</button>
+            <button class="btn btn-google" id="loginGoogle"><i class="fa-brands fa-google"></i> Google</button>
             <button class="btn btn-github" id="loginGithub"><i class="fa-brands fa-github"></i> GitHub</button>
           </div>
         </div>`;
@@ -283,12 +270,12 @@
       document.getElementById('loginGithub').onclick = () => signInWithPopup(auth, new GithubAuthProvider());
     }
 
-    // ========== PAGE RENDERER ==========
+    // ========== РЕНДЕРИНГ СТРАНИЦ ==========
     function renderPage() {
       if (!currentUser) { renderLanding(); return; }
       document.querySelector('.nav-links').style.visibility = 'visible';
       const container = document.getElementById('app');
-      switch (currentPage) {
+      switch(currentPage) {
         case 'dashboard': renderDashboard(container); break;
         case 'botDetail': renderBotDetail(container); break;
         case 'tops': renderTops(container); break;
@@ -310,235 +297,142 @@
       document.getElementById('createBotBtn').onclick = () => {
         modal('Новый Telegram бот', [
           {label:'Название', id:'name', placeholder:'Мой супер-бот'},
-          {label:'Токен (от @BotFather)', id:'token', placeholder:'123456:ABC-DEF...'},
-          {label:'Описание', id:'description', type:'textarea'},
-          {label:'Категория', id:'category', type:'select', options:['Игры','Утилиты','Бизнес','Развлечения','Образование','Другое']}
+          {label:'Токен (@BotFather)', id:'token', placeholder:'123456:ABC...'},
+          {label:'Описание', id:'desc', type:'textarea'},
+          {label:'Категория', id:'cat', type:'select', options:['Игры','Утилиты','Бизнес','Развлечения','Образование','Другое']}
         ], async (vals) => {
-          if (!vals.name || !vals.token) return toast('Заполните название и токен', 'error');
-          const botInfo = await checkBotToken(vals.token);
-          if (!botInfo) return toast('Неверный токен бота', 'error');
+          if (!vals.name || !vals.token) return toast('Заполните поля', 'error');
+          const info = await checkBotToken(vals.token);
+          if (!info) return toast('Неверный токен', 'error');
           const botRef = push(ref(rtdb, `bots/${currentUser.uid}`));
           await set(botRef, {
-            name: vals.name,
-            token: vals.token,
-            description: vals.description,
-            category: vals.category,
-            botUsername: botInfo.username,
-            botFirstName: botInfo.first_name,
-            botId: botInfo.id,
-            commands: [],
-            autoReply: null,
-            inlineKeyboard: null,
-            stats: { users: 0, messages: 0 },
-            active: false,
-            webhookUrl: '',
-            files: [],
-            createdAt: serverTimestamp()
+            name: vals.name, token: vals.token, description: vals.desc, category: vals.cat,
+            botUsername: info.username, botFirstName: info.first_name, botId: info.id,
+            commands: [], autoReply: null, stats: { users: 0, messages: 0 },
+            active: false, pollingOffset: 0, createdAt: serverTimestamp()
           });
-          // DKC + XP
-          await modifyUser({ dkc: 50, xp: 10 });
-          toast(`Бот @${botInfo.username} создан! +50 DKC`);
+          await modifyUser({ dkc: 50, xp: 10, description: 'Создание бота' });
+          toast(`Бот @${info.username} создан! +50 DKC`);
         });
       };
 
-      const botsRef = ref(rtdb, `bots/${currentUser.uid}`);
-      onValue(botsRef, (snap) => {
+      onValue(ref(rtdb, `bots/${currentUser.uid}`), snap => {
         const grid = document.getElementById('botsGrid');
-        if (!grid) return;
         const data = snap.val();
-        if (!data) {
-          grid.innerHTML = `<div class="empty-state"><i class="fa-solid fa-robot"></i><p>У вас пока нет ботов</p></div>`;
-          return;
-        }
-        grid.innerHTML = Object.entries(data).map(([id, bot]) => `
+        if (!data) { grid.innerHTML = '<div class="empty-state"><i class="fa-solid fa-robot"></i><p>Нет ботов</p></div>'; return; }
+        grid.innerHTML = Object.entries(data).map(([id, b]) => `
           <div class="card" style="cursor:pointer;" onclick="navigate('botDetail','${id}')">
             <div style="display:flex; justify-content:space-between; align-items:start;">
-              <h3>${bot.name}</h3>
-              <span class="badge ${bot.active?'badge-success':'badge-warning'}">${bot.active?'Активен':'Стоп'}</span>
+              <h3>${b.name}</h3>
+              <span class="badge ${b.active?'badge-success':'badge-warning'}">${b.active?'24/7 Активен':'Остановлен'}</span>
             </div>
-            <p>@${bot.botUsername}</p>
-            <p style="color:var(--muted); font-size:0.85rem;">${bot.description||''}</p>
+            <p>@${b.botUsername}</p>
+            <p style="color:var(--muted); font-size:0.85rem;">${b.description||''}</p>
             <div style="margin-top:8px; display:flex; gap:12px; color:var(--muted); font-size:0.8rem;">
-              <span><i class="fa-solid fa-users"></i> ${bot.stats?.users||0}</span>
-              <span><i class="fa-solid fa-comment"></i> ${bot.stats?.messages||0}</span>
+              <span><i class="fa-solid fa-users"></i> ${b.stats?.users||0}</span>
+              <span><i class="fa-solid fa-comment"></i> ${b.stats?.messages||0}</span>
             </div>
           </div>
         `).join('');
       });
     }
 
-    // ========== BOT DETAIL (конструктор) ==========
+    // ========== BOT DETAIL ==========
     function renderBotDetail(container) {
-      const botId = currentBotId;
-      const botRef = ref(rtdb, `bots/${currentUser.uid}/${botId}`);
+      const botRef = ref(rtdb, `bots/${currentUser.uid}/${currentBotId}`);
       get(botRef).then(snap => {
         const bot = snap.val();
         if (!bot) { toast('Бот не найден'); navigate('dashboard'); return; }
         container.innerHTML = `
           <div class="page-header">
             <h2><i class="fa-solid fa-arrow-left" onclick="navigate('dashboard')" style="cursor:pointer;"></i> ${bot.name}</h2>
-            <div>
-              <button class="btn btn-sm ${bot.active?'btn-danger':'btn-success'}" id="toggleBotBtn">${bot.active?'Остановить':'Запустить'}</button>
-              <button class="btn btn-sm btn-outline" id="editBotBtn"><i class="fa-solid fa-pen"></i></button>
-              <button class="btn btn-sm btn-danger" id="deleteBotBtn"><i class="fa-solid fa-trash"></i></button>
+            <div style="display:flex; align-items:center; gap:12px; flex-wrap:wrap;">
+              <div class="hosting-indicator">
+                <div class="pulse ${bot.active?'':'pulse-off'}"></div>
+                <span>${bot.active?'Хостинг 24/7 работает':'Хостинг остановлен'}</span>
+              </div>
+              <button class="btn btn-sm ${bot.active?'btn-danger':'btn-success'}" id="toggleBtn">
+                <i class="fa-solid ${bot.active?'fa-stop':'fa-play'}"></i> ${bot.active?'Остановить':'Запустить 24/7'}
+              </button>
+              <button class="btn btn-sm btn-outline" id="editBtn"><i class="fa-solid fa-pen"></i></button>
+              <button class="btn btn-sm btn-danger" id="deleteBtn"><i class="fa-solid fa-trash"></i></button>
             </div>
           </div>
           <div class="tabs">
             <div class="tab active" data-tab="commands">Команды</div>
             <div class="tab" data-tab="autoreply">Автоответчик</div>
-            <div class="tab" data-tab="buttons">Кнопки</div>
             <div class="tab" data-tab="stats">Статистика</div>
-            <div class="tab" data-tab="files">Файлы</div>
-            <div class="tab" data-tab="webhook">Вебхук</div>
           </div>
           <div id="tabContent"></div>`;
 
         const tabContent = document.getElementById('tabContent');
         const tabs = document.querySelectorAll('.tab');
+        let currentTab = 'commands';
 
-        function switchTab(tabName) {
-          currentTab = tabName;
+        function switchTab(tab) {
+          currentTab = tab;
           tabs.forEach(t => t.classList.remove('active'));
-          document.querySelector(`[data-tab="${tabName}"]`).classList.add('active');
-          renderTabContent(tabName);
+          document.querySelector(`[data-tab="${tab}"]`).classList.add('active');
+          if (tab === 'commands') renderCommands();
+          else if (tab === 'autoreply') renderAutoReply();
+          else if (tab === 'stats') renderStats();
         }
-
         tabs.forEach(t => t.addEventListener('click', () => switchTab(t.dataset.tab)));
 
-        function renderTabContent(tab) {
-          switch(tab) {
-            case 'commands': renderCommandsTab(); break;
-            case 'autoreply': renderAutoReplyTab(); break;
-            case 'buttons': renderButtonsTab(); break;
-            case 'stats': renderStatsTab(); break;
-            case 'files': renderFilesTab(); break;
-            case 'webhook': renderWebhookTab(); break;
-          }
-        }
-
-        // --- Commands ---
-        function renderCommandsTab() {
+        function renderCommands() {
           const cmds = bot.commands || [];
           tabContent.innerHTML = `
-            <button class="btn btn-sm btn-primary" id="addCmdBtn"><i class="fa-solid fa-plus"></i> Добавить команду</button>
-            <div style="margin-top:12px;">${cmds.length===0 ? '<p class="empty-state">Нет команд</p>' : cmds.map((c,i)=>`<div class="card" style="margin-bottom:8px;"><strong>/${c.command}</strong> → ${c.response||'...'} <button class="btn btn-xs btn-danger" data-cmdidx="${i}"><i class="fa-solid fa-trash"></i></button></div>`).join('')}</div>`;
-          document.getElementById('addCmdBtn').onclick = () => {
-            modal('Новая команда', [
-              {label:'Команда (без /)', id:'command', placeholder:'start'},
-              {label:'Ответ', id:'response', type:'textarea', placeholder:'Привет!'}
-            ], async (vals) => {
-              if (!vals.command) return;
-              const newCmds = [...cmds, { command: vals.command, response: vals.response }];
-              await update(botRef, { commands: newCmds });
-              toast('Команда добавлена');
-            });
-          };
-          document.querySelectorAll('[data-cmdidx]').forEach(btn => {
-            btn.onclick = async () => {
-              const idx = parseInt(btn.dataset.cmdidx);
-              cmds.splice(idx,1);
-              await update(botRef, { commands: cmds });
-              toast('Команда удалена');
-            };
+            <button class="btn btn-sm btn-primary" id="addCmd"><i class="fa-solid fa-plus"></i> Добавить</button>
+            <div style="margin-top:12px;">${cmds.length===0?'<p class="empty-state">Нет команд</p>':cmds.map((c,i)=>`<div class="card" style="margin-bottom:8px;"><strong>/${c.command}</strong> → ${c.response||'...'} <button class="btn btn-xs btn-danger" data-idx="${i}"><i class="fa-solid fa-trash"></i></button></div>`).join('')}</div>`;
+          document.getElementById('addCmd').onclick = () => modal('Новая команда', [
+            {label:'Команда', id:'cmd', placeholder:'start'},
+            {label:'Ответ', id:'resp', type:'textarea', placeholder:'Привет!'}
+          ], async v => {
+            if (!v.cmd) return;
+            await update(botRef, { commands: [...cmds, {command:v.cmd, response:v.resp}] });
+            toast('Добавлено'); switchTab('commands');
+          });
+          document.querySelectorAll('[data-idx]').forEach(b => b.onclick = async () => {
+            const idx = parseInt(b.dataset.idx);
+            cmds.splice(idx, 1);
+            await update(botRef, { commands: cmds });
+            toast('Удалено'); switchTab('commands');
           });
         }
 
-        // --- AutoReply ---
-        function renderAutoReplyTab() {
-          tabContent.innerHTML = `
-            <label>Текст автоответчика (на любое сообщение)</label>
-            <textarea id="autoReplyText" rows="3">${bot.autoReply||''}</textarea>
-            <button class="btn btn-sm btn-primary" id="saveAutoReply">Сохранить</button>`;
-          document.getElementById('saveAutoReply').onclick = async () => {
-            const text = document.getElementById('autoReplyText').value.trim();
-            await update(botRef, { autoReply: text || null });
+        function renderAutoReply() {
+          tabContent.innerHTML = `<label>Автоответ на любое сообщение</label><textarea id="arText" rows="3">${bot.autoReply||''}</textarea><button class="btn btn-sm btn-primary" id="saveAr" style="margin-top:8px;">Сохранить</button>`;
+          document.getElementById('saveAr').onclick = async () => {
+            await update(botRef, { autoReply: document.getElementById('arText').value.trim() || null });
             toast('Сохранено');
           };
         }
 
-        // --- Buttons ---
-        function renderButtonsTab() {
-          tabContent.innerHTML = `<p>Конструктор клавиатуры (Reply/Inline) — в разработке</p>`;
-        }
-
-        // --- Statistics (Chart.js) ---
-        function renderStatsTab() {
+        function renderStats() {
           tabContent.innerHTML = `
             <div class="chart-box"><canvas id="statsChart"></canvas></div>
-            <div style="margin-top:16px;"><strong>Пользователи:</strong> ${bot.stats?.users||0} | <strong>Сообщения:</strong> ${bot.stats?.messages||0}</div>`;
+            <div style="margin-top:16px;"><strong>👥 ${bot.stats?.users||0}</strong> пользователей | <strong>💬 ${bot.stats?.messages||0}</strong> сообщений</div>`;
+          if (chartInstance) chartInstance.destroy();
           const ctx = document.getElementById('statsChart').getContext('2d');
-          new Chart(ctx, {
+          chartInstance = new Chart(ctx, {
             type: 'line',
-            data: {
-              labels: ['Пн','Вт','Ср','Чт','Пт','Сб','Вс'],
-              datasets: [{
-                label: 'Новые пользователи',
-                data: [0,0,0,0,0,0,0],
-                borderColor: '#58a6ff',
-                tension: 0.3
-              }]
-            },
+            data: { labels: ['Пн','Вт','Ср','Чт','Пт','Сб','Вс'], datasets: [{ label: 'Новые', data: [0,0,0,0,0,0,0], borderColor: '#58a6ff', tension:0.3 }] },
             options: { scales: { y: { beginAtZero: true } } }
           });
         }
 
-        // --- Files ---
-        function renderFilesTab() {
-          tabContent.innerHTML = `
-            <input type="file" id="fileUpload" />
-            <button class="btn btn-sm btn-primary" id="uploadBtn">Загрузить</button>
-            <div id="fileList"></div>`;
-          // список файлов из Storage
-          const filesRef = sRef(storage, `bots/${currentUser.uid}/${botId}`);
-          listAll(filesRef).then(res => {
-            const fl = document.getElementById('fileList');
-            fl.innerHTML = res.items.length===0 ? '<p>Нет файлов</p>' : '';
-            res.items.forEach(item => {
-              getDownloadURL(item).then(url => {
-                fl.innerHTML += `<div>📄 ${item.name} <a href="${url}" target="_blank">Скачать</a></div>`;
-              });
-            });
-          });
-          document.getElementById('uploadBtn').onclick = () => {
-            const file = document.getElementById('fileUpload').files[0];
-            if (!file) return;
-            const uploadTask = uploadBytesResumable(sRef(storage, `bots/${currentUser.uid}/${botId}/${file.name}`), file);
-            uploadTask.on('state_changed', null, err => toast('Ошибка загрузки', 'error'), () => {
-              toast('Файл загружен');
-              renderFilesTab(); // обновить список
-            });
-          };
-        }
-
-        // --- Webhook ---
-        function renderWebhookTab() {
-          tabContent.innerHTML = `
-            <p>Webhook URL: <code>https://your-cloud-function.net/bot/${botId}</code></p>
-            <p>Статус: ${bot.active ? '<span class="badge badge-success">Активен</span>' : '<span class="badge badge-warning">Неактивен</span>'}</p>
-            <p class="muted">Функция вебхука настраивается в Cloud Functions (см. документацию)</p>`;
-        }
-
-        // Обработчики кнопок управления ботом
-        document.getElementById('toggleBotBtn').onclick = async () => {
+        document.getElementById('toggleBtn').onclick = async () => {
           const newActive = !bot.active;
           await update(botRef, { active: newActive });
-          toast(newActive ? 'Бот запущен' : 'Бот остановлен');
+          toast(newActive ? '🚀 Хостинг 24/7 запущен' : 'Бот остановлен');
+          renderBotDetail(container);
         };
-        document.getElementById('editBotBtn').onclick = () => {
-          modal('Редактировать бота', [
-            {label:'Название', id:'name', value:bot.name},
-            {label:'Описание', id:'desc', type:'textarea', value:bot.description||''}
-          ], async (vals) => {
-            await update(botRef, { name: vals.name, description: vals.desc });
-            toast('Сохранено');
-          });
-        };
-        document.getElementById('deleteBotBtn').onclick = async () => {
-          if (confirm('Удалить бота?')) {
-            await remove(botRef);
-            toast('Бот удалён');
-            navigate('dashboard');
-          }
+        document.getElementById('editBtn').onclick = () => modal('Редактировать', [
+          {label:'Название', id:'name', value:bot.name},
+          {label:'Описание', id:'desc', type:'textarea', value:bot.description||''}
+        ], async v => { await update(botRef, { name: v.name, description: v.desc }); toast('Сохранено'); renderBotDetail(container); });
+        document.getElementById('deleteBtn').onclick = async () => {
+          if (confirm('Удалить бота?')) { await remove(botRef); toast('Удалён'); navigate('dashboard'); }
         };
 
         switchTab('commands');
@@ -547,47 +441,31 @@
 
     // ========== TOPS ==========
     function renderTops(container) {
-      container.innerHTML = `
-        <h2><i class="fa-solid fa-trophy"></i> Топ ботов</h2>
-        <div class="grid" id="topBotsGrid"></div>
-        <h2 style="margin-top:32px;"><i class="fa-solid fa-user-tie"></i> Топ разработчиков</h2>
-        <div class="grid" id="topDevsGrid"></div>`;
-
+      container.innerHTML = `<h2><i class="fa-solid fa-trophy"></i> Топ ботов</h2><div class="grid" id="topBots"></div>
+        <h2 style="margin-top:32px;"><i class="fa-solid fa-user-tie"></i> Топ разработчиков</h2><div class="grid" id="topDevs"></div>`;
       onValue(ref(rtdb, 'bots'), snap => {
-        const bots = [];
-        snap.forEach(userSnap => userSnap.forEach(botSnap => bots.push({ uid: userSnap.key, ...botSnap.val() })));
+        const bots = []; snap.forEach(u => u.forEach(b => bots.push({...b.val(), uid: u.key})));
         bots.sort((a,b) => (b.stats?.users||0) - (a.stats?.users||0));
-        document.getElementById('topBotsGrid').innerHTML = bots.slice(0,10).map((b,i) => `<div class="card">${i+1}. @${b.botUsername} — ${b.stats?.users||0} 👥</div>`).join('');
+        document.getElementById('topBots').innerHTML = bots.slice(0,10).map((b,i) => `<div class="card">${i+1}. @${b.botUsername} — ${b.stats?.users||0} 👥</div>`).join('');
       });
       onValue(ref(rtdb, 'users'), snap => {
-        const devs = [];
-        snap.forEach(u => { const d = u.val(); if (d.totalUsers) devs.push({name: d.displayName||d.email, users: d.totalUsers}); });
+        const devs = []; snap.forEach(u => { const d = u.val(); if(d.totalUsers) devs.push({name: d.displayName||d.email, users: d.totalUsers}); });
         devs.sort((a,b) => b.users - a.users);
-        document.getElementById('topDevsGrid').innerHTML = devs.slice(0,10).map((d,i) => `<div class="card">${i+1}. ${d.name} — ${d.users} 👥</div>`).join('');
+        document.getElementById('topDevs').innerHTML = devs.slice(0,10).map((d,i) => `<div class="card">${i+1}. ${d.name} — ${d.users} 👥</div>`).join('');
       });
     }
 
-    // ========== MARKETPLACE (Firestore) ==========
+    // ========== MARKETPLACE ==========
     function renderMarketplace(container) {
-      container.innerHTML = `<h2>🛒 Маркетплейс шаблонов</h2><div class="grid" id="templatesGrid"></div>`;
-      const q = query(collection(firestore, "templates"), orderBy("createdAt","desc"));
-      onSnapshot(q, snap => {
-        document.getElementById('templatesGrid').innerHTML = snap.empty ? '<div class="empty-state">Нет шаблонов</div>' : '';
+      container.innerHTML = `<h2>🛒 Маркетплейс шаблонов</h2><div class="grid" id="tmplGrid"></div>`;
+      onSnapshot(query(collection(firestore, "templates"), orderBy("createdAt","desc")), snap => {
+        document.getElementById('tmplGrid').innerHTML = snap.empty ? '<div class="empty-state">Нет шаблонов</div>' : '';
         snap.forEach(doc => {
           const t = doc.data();
-          document.getElementById('templatesGrid').innerHTML += `
-            <div class="card">
-              <h3>${t.name}</h3><p>${t.description||''}</p>
-              <p>💰 ${t.price||0} DKC | ⭐ ${t.rating||0}</p>
-              <button class="btn btn-sm btn-primary" onclick="purchaseTemplate('${doc.id}', ${t.price||0})">Купить</button>
-            </div>`;
+          document.getElementById('tmplGrid').innerHTML += `<div class="card"><h3>${t.name}</h3><p>${t.description||''}</p><p>💰 ${t.price||0} DKC</p><button class="btn btn-sm btn-primary">Купить</button></div>`;
         });
       });
     }
-    window.purchaseTemplate = async (templateId, price) => {
-      // логика покупки: списать DKC, создать бота из шаблона
-      toast('Функция в разработке');
-    };
 
     // ========== PROFILE ==========
     async function renderProfile(container) {
@@ -607,69 +485,53 @@
           </div>
           <h4 style="margin-top:16px;">🏅 Бейджи</h4>
           <div>${Object.keys(u.badges||{}).map(b=>`<span class="badge badge-accent">${b}</span>`).join(' ')||'Нет'}</div>
+          <h4 style="margin-top:16px;">👥 Реферальная система</h4>
+          <p>Ваш код: <strong>${u.referralCode||''}</strong></p>
+          <p>Приглашено: ${u.referralCount||0} чел.</p>
+          <button class="btn btn-sm btn-primary" id="activatePromo">Активировать промокод</button>
         </div>
         <h3 style="margin-top:24px;">История транзакций</h3>
         <div id="txList"></div>`;
-      const txQuery = query(collection(firestore, `transactions/${currentUser.uid}/items`), orderBy("createdAt","desc"), limit(20));
-      onSnapshot(txQuery, snap => {
+
+      document.getElementById('activatePromo').onclick = () => {
+        modal('Промокод', [{label:'Код', id:'code', placeholder:'XXX-XXX'}], async v => {
+          const promoRef = ref(rtdb, `promocodes/${v.code}`);
+          const promoSnap = await get(promoRef);
+          if (!promoSnap.exists()) return toast('Промокод не найден', 'error');
+          const promo = promoSnap.val();
+          if (promo.usedCount >= promo.maxUses) return toast('Лимит использований', 'error');
+          if (promo.expiresAt && Date.now() > promo.expiresAt) return toast('Истёк', 'error');
+          await update(promoRef, { usedCount: (promo.usedCount||0) + 1 });
+          await modifyUser({ dkc: promo.value, description: 'Промокод' });
+          toast(`+${promo.value} DKC по промокоду!`);
+          renderPage();
+        });
+      };
+
+      onSnapshot(query(collection(firestore, `transactions/${currentUser.uid}/items`), orderBy("createdAt","desc"), limit(20)), snap => {
         document.getElementById('txList').innerHTML = snap.docs.map(d => `<div class="card">${d.data().description} : ${d.data().amount>0?'+':''}${d.data().amount} DKC</div>`).join('');
       });
     }
+
     window.editProfile = () => {
       get(ref(rtdb, `users/${currentUser.uid}`)).then(snap => {
         const u = snap.val();
         modal('Профиль', [
           {label:'@username', id:'username', value:u.username||''},
           {label:'Био', id:'bio', type:'textarea', value:u.bio||''}
-        ], async (vals) => {
-          await update(ref(rtdb, `users/${currentUser.uid}`), { username: vals.username, bio: vals.bio });
-          toast('Профиль обновлён');
-          renderPage();
+        ], async v => {
+          await update(ref(rtdb, `users/${currentUser.uid}`), { username: v.username, bio: v.bio });
+          toast('Сохранено'); renderPage();
         });
       });
     };
 
-    // ========== ADMIN PANEL (заглушка) ==========
     function renderAdmin(container) {
-      container.innerHTML = `<h2>🛡️ Админ-панель</h2><p>Управление пользователями, ботами, промокодами (только для админов).</p>`;
+      container.innerHTML = `<h2>🛡️ Админ-панель</h2><p>Только для администраторов.</p>`;
     }
 
-    // ========== HELPER: modify user data ==========
-    async function modifyUser(delta) {
-      const userRef = ref(rtdb, `users/${currentUser.uid}`);
-      const snap = await get(userRef);
-      if (!snap.exists()) return;
-      const data = snap.val();
-      const updates = {};
-      if (delta.dkc) updates.dkc = (data.dkc||0) + delta.dkc;
-      if (delta.xp) {
-        updates.xp = (data.xp||0) + delta.xp;
-        const newLevel = Math.floor(updates.xp / 100) + 1;
-        if (newLevel > (data.level||1)) updates.level = newLevel;
-      }
-      await update(userRef, updates);
-      if (delta.dkc && delta.description) {
-        await addDoc(collection(firestore, `transactions/${currentUser.uid}/items`), {
-          amount: delta.dkc,
-          description: delta.description,
-          createdAt: new Date()
-        });
-      }
-    }
-
-    async function checkBotToken(token) {
-      try {
-        const res = await fetch(`https://api.telegram.org/bot${token}/getMe`);
-        const data = await res.json();
-        return data.ok ? data.result : null;
-      } catch { return null; }
-    }
-
-    // ========== INIT ==========
     onAuthStateChanged(auth, handleUser);
-
-    // Обработка кликов по навигации
-    document.querySelector('.nav-links').addEventListener('click', (e) => {
+    document.querySelector('.nav-links').addEventListener('click', e => {
       if (e.target.tagName === 'A' && e.target.dataset.page) {
         e.preventDefault();
         navigate(e.target.dataset.page);
