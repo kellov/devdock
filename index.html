@@ -3,122 +3,360 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>DevDock</title>
+  <title>DevDock — Конструктор проектов</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   <style>
-    body { font-family: Arial, sans-serif; max-width: 600px; margin: 50px auto; padding: 0 20px; }
-    button { padding: 10px 20px; font-size: 16px; cursor: pointer; }
-    .card { border: 1px solid #ccc; padding: 15px; margin: 10px 0; border-radius: 8px; }
-    input, textarea { width: 100%; padding: 8px; margin: 5px 0; box-sizing: border-box; }
+    :root {
+      --bg: #0d1117;
+      --card: #161b22;
+      --border: #30363d;
+      --text: #c9d1d9;
+      --muted: #8b949e;
+      --accent: #58a6ff;
+      --green: #3fb950;
+      --red: #f85149;
+      --orange: #d2991d;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { 
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: var(--bg); color: var(--text);
+      min-height: 100vh;
+    }
+    nav {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 16px 24px; border-bottom: 1px solid var(--border);
+      background: var(--card);
+    }
+    nav .logo { font-size: 22px; font-weight: 700; }
+    nav .logo i { color: var(--accent); margin-right: 8px; }
+    nav .user { display: flex; align-items: center; gap: 12px; }
+    nav .user img { width: 32px; height: 32px; border-radius: 50%; }
+    nav button {
+      background: var(--card); color: var(--text);
+      border: 1px solid var(--border); padding: 8px 16px;
+      border-radius: 6px; cursor: pointer; font-size: 14px;
+      transition: 0.2s;
+    }
+    nav button:hover { background: #1f2937; }
+    .container { max-width: 900px; margin: 0 auto; padding: 32px 20px; }
+
+    /* Hero для неавторизованных */
+    .hero { text-align: center; padding: 80px 20px; }
+    .hero h1 { font-size: 48px; margin-bottom: 16px; }
+    .hero p { font-size: 18px; color: var(--muted); margin-bottom: 32px; max-width: 500px; margin-left: auto; margin-right: auto; }
+    .btn {
+      display: inline-flex; align-items: center; gap: 10px;
+      padding: 14px 28px; font-size: 16px; font-weight: 600;
+      border-radius: 8px; cursor: pointer; border: none;
+      transition: 0.2s; text-decoration: none;
+    }
+    .btn-github { background: #24292f; color: #fff; }
+    .btn-github:hover { background: #2b3138; }
+    .btn-primary { background: var(--accent); color: #fff; }
+    .btn-primary:hover { opacity: 0.85; }
+    .btn-danger { background: var(--red); color: #fff; }
+    .btn-danger:hover { opacity: 0.85; }
+    .btn-sm { padding: 6px 12px; font-size: 13px; }
+
+    /* Заголовок страницы */
+    .page-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; flex-wrap: wrap; gap: 12px; }
+    .page-header h2 { font-size: 28px; }
+    .page-header h2 i { color: var(--accent); margin-right: 10px; }
+
+    /* Карточки проектов */
+    .projects-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 16px; }
+    .project-card {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 10px; padding: 20px; position: relative;
+      transition: 0.2s; cursor: pointer;
+    }
+    .project-card:hover { border-color: var(--accent); transform: translateY(-2px); }
+    .project-card .icon { font-size: 28px; margin-bottom: 12px; }
+    .project-card h3 { font-size: 18px; margin-bottom: 6px; word-break: break-word; }
+    .project-card p { font-size: 13px; color: var(--muted); margin-bottom: 8px; }
+    .project-card .meta { font-size: 12px; color: var(--muted); display: flex; gap: 12px; align-items: center; }
+    .project-card .delete-btn {
+      position: absolute; top: 12px; right: 12px;
+      background: none; border: none; color: var(--muted);
+      cursor: pointer; font-size: 16px; opacity: 0;
+      transition: 0.2s;
+    }
+    .project-card:hover .delete-btn { opacity: 1; }
+    .project-card .delete-btn:hover { color: var(--red); }
+
+    /* Модалка */
+    .modal-overlay {
+      position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.7); display: flex; align-items: center; justify-content: center;
+      z-index: 1000;
+    }
+    .modal {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 12px; padding: 28px; width: 90%; max-width: 450px;
+    }
+    .modal h3 { margin-bottom: 16px; font-size: 20px; }
+    .modal label { display: block; font-size: 13px; color: var(--muted); margin-bottom: 4px; }
+    .modal input, .modal textarea, .modal select {
+      width: 100%; padding: 10px; margin-bottom: 14px;
+      background: var(--bg); border: 1px solid var(--border);
+      border-radius: 6px; color: var(--text); font-size: 14px;
+    }
+    .modal .actions { display: flex; gap: 10px; justify-content: flex-end; }
+
+    /* Пустое состояние */
+    .empty { text-align: center; padding: 60px 20px; color: var(--muted); }
+    .empty i { font-size: 48px; margin-bottom: 16px; display: block; }
+
+    /* Toast */
+    .toast {
+      position: fixed; bottom: 24px; right: 24px;
+      background: var(--green); color: #fff; padding: 12px 20px;
+      border-radius: 8px; font-size: 14px; z-index: 2000;
+      animation: slideUp 0.3s ease;
+    }
+    @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
   </style>
 </head>
 <body>
-  <h1>🛠️ DevDock</h1>
-  <div id="app">
-    <p>Загрузка...</p>
+  <nav>
+    <div class="logo"><i class="fa-solid fa-dharmachakra"></i>DevDock</div>
+    <div class="user" id="navUser"></div>
+  </nav>
+
+  <div class="container" id="app">
+    <p style="text-align:center;padding:80px;">Загрузка...</p>
   </div>
 
-  <!-- Firebase SDKs -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
     import { getAuth, signInWithPopup, GithubAuthProvider, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-    import { getFirestore, collection, addDoc, query, orderBy, limit, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+    import { getDatabase, ref, set, push, onValue, remove, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 
-    // Твоя конфигурация
     const firebaseConfig = {
       apiKey: "AIzaSyCQlvzosVihEhlF2W-jE2DcYViqHXwT4YM",
       authDomain: "devdock-5cb61.firebaseapp.com",
       projectId: "devdock-5cb61",
       storageBucket: "devdock-5cb61.firebasestorage.app",
       messagingSenderId: "866582930096",
-      appId: "1:866582930096:web:6521525247be0ef271d175",
-      measurementId: "G-HXT5YK3Y68"
+      appId: "1:866582930096:web:6521525247be0ef271d175"
     };
 
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
-    const db = getFirestore(app);
+    const db = getDatabase(app);
 
     const appDiv = document.getElementById('app');
+    const navUser = document.getElementById('navUser');
 
-    // Рендер интерфейса
-    function render(user) {
-      if (user) {
-        appDiv.innerHTML = `
-          <p>Привет, <strong>${user.displayName || user.email}</strong>! 
-          <button id="logoutBtn">Выйти</button></p>
-          <hr>
-          <h3>📦 Твои проекты</h3>
-          <div id="projectsList">Загрузка проектов...</div>
-          <h4>➕ Добавить проект</h4>
-          <input type="text" id="projectName" placeholder="Название проекта" />
-          <textarea id="projectDesc" placeholder="Описание (необязательно)" rows="2"></textarea>
-          <button id="addProjectBtn">Добавить</button>
-        `;
+    const projectIcons = ['fa-robot', 'fa-code', 'fa-globe', 'fa-mobile-screen', 'fa-database', 'fa-cloud', 'fa-cog', 'fa-bolt'];
 
-        // Подписка на проекты пользователя
-        const q = query(collection(db, "projects"), orderBy("createdAt", "desc"), limit(50));
-        const unsubscribe = onSnapshot(q, (snapshot) => {
-          const projectsDiv = document.getElementById('projectsList');
-          if (snapshot.empty) {
-            projectsDiv.innerHTML = '<p>Пока нет проектов.</p>';
-            return;
-          }
-          let html = '';
-          snapshot.forEach(doc => {
-            const data = doc.data();
-            html += `<div class="card">
-              <strong>${data.name || 'Без названия'}</strong>
-              <p>${data.description || ''}</p>
-              <small>${new Date(data.createdAt?.toDate()).toLocaleString()}</small>
-            </div>`;
-          });
-          projectsDiv.innerHTML = html;
-        });
-
-        document.getElementById('logoutBtn').addEventListener('click', () => signOut(auth));
-        document.getElementById('addProjectBtn').addEventListener('click', async () => {
-          const name = document.getElementById('projectName').value.trim();
-          const desc = document.getElementById('projectDesc').value.trim();
-          if (!name) return alert('Введи название');
-          try {
-            await addDoc(collection(db, "projects"), {
-              name,
-              description: desc,
-              createdAt: new Date(),
-              uid: user.uid
-            });
-            document.getElementById('projectName').value = '';
-            document.getElementById('projectDesc').value = '';
-          } catch (e) {
-            alert('Ошибка: ' + e.message);
-          }
-        });
-
-        // Отписка при выходе
-        window._unsubscribe = unsubscribe;
-      } else {
-        appDiv.innerHTML = `
-          <p>Добро пожаловать в DevDock — конструктор и хостинг для твоих проектов.</p>
-          <button id="loginBtn">Войти через GitHub</button>
-        `;
-        document.getElementById('loginBtn').addEventListener('click', async () => {
-          const provider = new GithubAuthProvider();
-          try {
-            await signInWithPopup(auth, provider);
-          } catch (e) {
-            alert('Ошибка входа: ' + e.message);
-          }
-        });
-      }
+    function toast(msg) {
+      const t = document.createElement('div');
+      t.className = 'toast'; t.textContent = msg;
+      document.body.appendChild(t);
+      setTimeout(() => t.remove(), 2500);
     }
 
-    // Следим за состоянием авторизации
+    function formatDate(ts) {
+      if (!ts) return 'только что';
+      return new Date(ts).toLocaleDateString('ru-RU', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+    }
+
+    let currentUser = null;
+    let modalCallback = null;
+
+    function showModal(title, fields, cb) {
+      const overlay = document.createElement('div');
+      overlay.className = 'modal-overlay';
+      let formHtml = fields.map(f => `
+        <label>${f.label}</label>
+        ${f.type === 'textarea' ? `<textarea id="modal_${f.id}" placeholder="${f.placeholder || ''}" rows="3"></textarea>` : 
+          f.type === 'select' ? `<select id="modal_${f.id}">${f.options.map(o => `<option value="${o}">${o}</option>`).join('')}</select>` :
+          `<input type="${f.type || 'text'}" id="modal_${f.id}" placeholder="${f.placeholder || ''}" />`}
+      `).join('');
+      overlay.innerHTML = `
+        <div class="modal">
+          <h3>${title}</h3>
+          ${formHtml}
+          <div class="actions">
+            <button class="btn btn-sm" id="modalCancel">Отмена</button>
+            <button class="btn btn-primary btn-sm" id="modalOk">OK</button>
+          </div>
+        </div>`;
+      document.body.appendChild(overlay);
+      document.getElementById('modalCancel').onclick = () => { overlay.remove(); modalCallback = null; };
+      document.getElementById('modalOk').onclick = () => {
+        const values = {};
+        fields.forEach(f => {
+          const el = document.getElementById(`modal_${f.id}`);
+          values[f.id] = el ? el.value.trim() : '';
+        });
+        overlay.remove();
+        if (cb) cb(values);
+      };
+      overlay.onclick = (e) => { if (e.target === overlay) { overlay.remove(); modalCallback = null; } };
+    }
+
+    function renderDashboard(user) {
+      currentUser = user;
+      navUser.innerHTML = `
+        <img src="${user.photoURL}" alt="avatar" />
+        <span>${user.displayName || user.email}</span>
+        <button id="logoutBtn"><i class="fa-solid fa-right-from-bracket"></i> Выйти</button>`;
+
+      appDiv.innerHTML = `
+        <div class="page-header">
+          <h2><i class="fa-solid fa-folder-tree"></i>Мои проекты</h2>
+          <button class="btn btn-primary" id="addProjectBtn"><i class="fa-solid fa-plus"></i> Новый проект</button>
+        </div>
+        <div class="projects-grid" id="projectsGrid"></div>`;
+
+      document.getElementById('logoutBtn').onclick = () => signOut(auth);
+      document.getElementById('addProjectBtn').onclick = () => {
+        showModal('Новый проект', [
+          { id: 'name', label: 'Название', placeholder: 'Мой бот / сайт / скрипт' },
+          { id: 'description', label: 'Описание', type: 'textarea', placeholder: 'Что делает проект...' },
+          { id: 'type', label: 'Тип', type: 'select', options: ['🤖 Telegram бот', '🌐 Сайт', '⚙️ Скрипт', '📱 Приложение', '🗄️ База данных', '☁️ Облачная функция'] }
+        ], async (vals) => {
+          if (!vals.name) return toast('Название обязательно!');
+          const projectsRef = ref(db, `projects/${user.uid}`);
+          const newRef = push(projectsRef);
+          await set(newRef, {
+            name: vals.name,
+            description: vals.description,
+            type: vals.type,
+            icon: projectIcons[Math.floor(Math.random() * projectIcons.length)],
+            createdAt: serverTimestamp(),
+            updatedAt: serverTimestamp()
+          });
+          toast('Проект создан!');
+        });
+      };
+
+      // Подписка на проекты
+      const projectsRef = ref(db, `projects/${user.uid}`);
+      onValue(projectsRef, (snapshot) => {
+        const grid = document.getElementById('projectsGrid');
+        if (!grid) return;
+        const data = snapshot.val();
+        if (!data) {
+          grid.innerHTML = `<div class="empty" style="grid-column:1/-1;"><i class="fa-solid fa-folder-open"></i><p>Нет проектов. Нажми «Новый проект», чтобы начать.</p></div>`;
+          return;
+        }
+        const entries = Object.entries(data).sort((a, b) => (b[1].createdAt || 0) - (a[1].createdAt || 0));
+        grid.innerHTML = entries.map(([id, p]) => `
+          <div class="project-card" data-id="${id}">
+            <i class="fa-solid ${p.icon || 'fa-folder'} icon"></i>
+            <h3>${p.name}</h3>
+            <p>${p.description || 'Без описания'}</p>
+            <span class="meta">
+              <span>${p.type || 'Проект'}</span>
+              <span>${formatDate(p.createdAt)}</span>
+            </span>
+            <button class="delete-btn" data-id="${id}"><i class="fa-solid fa-trash"></i></button>
+          </div>`).join('');
+
+        // Удаление
+        document.querySelectorAll('.delete-btn').forEach(btn => {
+          btn.onclick = async (e) => {
+            e.stopPropagation();
+            const id = btn.dataset.id;
+            const project = data[id];
+            if (confirm(`Удалить проект «${project.name}»? Это действие необратимо.`)) {
+              await remove(ref(db, `projects/${user.uid}/${id}`));
+              toast('Проект удалён');
+            }
+          };
+        });
+
+        // Клик по карточке
+        document.querySelectorAll('.project-card').forEach(card => {
+          card.onclick = () => {
+            const id = card.dataset.id;
+            const project = data[id];
+            showProjectDetail(user.uid, id, project);
+          };
+        });
+      });
+    }
+
+    function showProjectDetail(uid, projectId, project) {
+      appDiv.innerHTML = `
+        <div class="page-header">
+          <h2><i class="fa-solid fa-arrow-left" id="backBtn" style="cursor:pointer;margin-right:12px;"></i>${project.name}</h2>
+          <div>
+            <button class="btn btn-sm" id="editProjectBtn"><i class="fa-solid fa-pen-to-square"></i> Редактировать</button>
+            <button class="btn btn-sm btn-danger" id="deleteProjectBtn"><i class="fa-solid fa-trash"></i> Удалить</button>
+          </div>
+        </div>
+        <div style="background:var(--card);border:1px solid var(--border);border-radius:10px;padding:24px;">
+          <p><i class="fa-solid fa-tag"></i> <strong>Тип:</strong> ${project.type || 'Не указан'}</p>
+          <p><i class="fa-solid fa-align-left"></i> <strong>Описание:</strong> ${project.description || 'Нет описания'}</p>
+          <p><i class="fa-solid fa-clock"></i> <strong>Создан:</strong> ${formatDate(project.createdAt)}</p>
+          <p><i class="fa-solid fa-pen"></i> <strong>Обновлён:</strong> ${formatDate(project.updatedAt)}</p>
+        </div>
+        <h3 style="margin-top:28px;"><i class="fa-solid fa-file-code"></i> Файлы проекта</h3>
+        <div id="filesSection">
+          <p style="color:var(--muted);padding:20px;">📂 Загрузка файлов будет доступна после подключения Storage.</p>
+        </div>
+      `;
+
+      document.getElementById('backBtn').onclick = () => renderDashboard(currentUser);
+      document.getElementById('deleteProjectBtn').onclick = async () => {
+        if (confirm(`Удалить проект «${project.name}»?`)) {
+          await remove(ref(db, `projects/${uid}/${projectId}`));
+          toast('Проект удалён');
+          renderDashboard(currentUser);
+        }
+      };
+      document.getElementById('editProjectBtn').onclick = () => {
+        showModal('Редактировать проект', [
+          { id: 'name', label: 'Название', placeholder: project.name },
+          { id: 'description', label: 'Описание', type: 'textarea', placeholder: project.description || '' },
+          { id: 'type', label: 'Тип', type: 'select', options: ['🤖 Telegram бот', '🌐 Сайт', '⚙️ Скрипт', '📱 Приложение', '🗄️ База данных', '☁️ Облачная функция'] }
+        ], async (vals) => {
+          if (!vals.name) return toast('Название обязательно!');
+          await set(ref(db, `projects/${uid}/${projectId}`), {
+            ...project,
+            name: vals.name,
+            description: vals.description,
+            type: vals.type,
+            updatedAt: serverTimestamp()
+          });
+          toast('Проект обновлён');
+          renderDashboard(currentUser);
+        });
+      };
+    }
+
+    function renderLanding() {
+      navUser.innerHTML = '';
+      appDiv.innerHTML = `
+        <div class="hero">
+          <h1><i class="fa-solid fa-dharmachakra" style="color:var(--accent);"></i> DevDock</h1>
+          <p>Создавай, управляй и хости свои проекты в одном месте. Конструктор ботов, сайтов и скриптов с интеграцией GitHub.</p>
+          <button class="btn btn-github" id="loginBtn"><i class="fa-brands fa-github"></i> Войти через GitHub</button>
+          <p style="margin-top:16px;font-size:13px;color:var(--muted);">Нет аккаунта? Он создастся автоматически при входе.</p>
+        </div>`;
+      document.getElementById('loginBtn').onclick = async () => {
+        const provider = new GithubAuthProvider();
+        provider.addScope('repo');
+        try {
+          await signInWithPopup(auth, provider);
+        } catch (e) {
+          if (e.code === 'auth/account-exists-with-different-credential') {
+            alert('Аккаунт уже существует с другим способом входа.');
+          } else {
+            alert('Ошибка входа: ' + e.message);
+          }
+        }
+      };
+    }
+
     onAuthStateChanged(auth, (user) => {
-      render(user);
-      if (window._unsubscribe) {
-        window._unsubscribe();
-        window._unsubscribe = null;
-      }
+      if (user) renderDashboard(user);
+      else renderLanding();
     });
   </script>
 </body>
