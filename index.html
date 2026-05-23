@@ -41,7 +41,6 @@
     nav button:hover { background: #1f2937; }
     .container { max-width: 900px; margin: 0 auto; padding: 32px 20px; }
 
-    /* Hero для неавторизованных */
     .hero { text-align: center; padding: 80px 20px; }
     .hero h1 { font-size: 48px; margin-bottom: 16px; }
     .hero p { font-size: 18px; color: var(--muted); margin-bottom: 32px; max-width: 500px; margin-left: auto; margin-right: auto; }
@@ -51,20 +50,18 @@
       border-radius: 8px; cursor: pointer; border: none;
       transition: 0.2s; text-decoration: none;
     }
-    .btn-github { background: #24292f; color: #fff; }
-    .btn-github:hover { background: #2b3138; }
+    .btn-google { background: #fff; color: #1f1f1f; }
+    .btn-google:hover { background: #e8e8e8; }
     .btn-primary { background: var(--accent); color: #fff; }
     .btn-primary:hover { opacity: 0.85; }
     .btn-danger { background: var(--red); color: #fff; }
     .btn-danger:hover { opacity: 0.85; }
     .btn-sm { padding: 6px 12px; font-size: 13px; }
 
-    /* Заголовок страницы */
     .page-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; flex-wrap: wrap; gap: 12px; }
     .page-header h2 { font-size: 28px; }
     .page-header h2 i { color: var(--accent); margin-right: 10px; }
 
-    /* Карточки проектов */
     .projects-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 16px; }
     .project-card {
       background: var(--card); border: 1px solid var(--border);
@@ -85,7 +82,6 @@
     .project-card:hover .delete-btn { opacity: 1; }
     .project-card .delete-btn:hover { color: var(--red); }
 
-    /* Модалка */
     .modal-overlay {
       position: fixed; top: 0; left: 0; right: 0; bottom: 0;
       background: rgba(0,0,0,0.7); display: flex; align-items: center; justify-content: center;
@@ -104,11 +100,9 @@
     }
     .modal .actions { display: flex; gap: 10px; justify-content: flex-end; }
 
-    /* Пустое состояние */
     .empty { text-align: center; padding: 60px 20px; color: var(--muted); }
     .empty i { font-size: 48px; margin-bottom: 16px; display: block; }
 
-    /* Toast */
     .toast {
       position: fixed; bottom: 24px; right: 24px;
       background: var(--green); color: #fff; padding: 12px 20px;
@@ -130,7 +124,7 @@
 
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-    import { getAuth, signInWithPopup, GithubAuthProvider, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+    import { getAuth, signInWithPopup, GoogleAuthProvider, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
     import { getDatabase, ref, set, push, onValue, remove, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 
     const firebaseConfig = {
@@ -164,7 +158,6 @@
     }
 
     let currentUser = null;
-    let modalCallback = null;
 
     function showModal(title, fields, cb) {
       const overlay = document.createElement('div');
@@ -185,7 +178,7 @@
           </div>
         </div>`;
       document.body.appendChild(overlay);
-      document.getElementById('modalCancel').onclick = () => { overlay.remove(); modalCallback = null; };
+      document.getElementById('modalCancel').onclick = () => overlay.remove();
       document.getElementById('modalOk').onclick = () => {
         const values = {};
         fields.forEach(f => {
@@ -195,7 +188,7 @@
         overlay.remove();
         if (cb) cb(values);
       };
-      overlay.onclick = (e) => { if (e.target === overlay) { overlay.remove(); modalCallback = null; } };
+      overlay.onclick = (e) => { if (e.target === overlay) overlay.remove(); };
     }
 
     function renderDashboard(user) {
@@ -234,7 +227,6 @@
         });
       };
 
-      // Подписка на проекты
       const projectsRef = ref(db, `projects/${user.uid}`);
       onValue(projectsRef, (snapshot) => {
         const grid = document.getElementById('projectsGrid');
@@ -257,7 +249,6 @@
             <button class="delete-btn" data-id="${id}"><i class="fa-solid fa-trash"></i></button>
           </div>`).join('');
 
-        // Удаление
         document.querySelectorAll('.delete-btn').forEach(btn => {
           btn.onclick = async (e) => {
             e.stopPropagation();
@@ -270,7 +261,6 @@
           };
         });
 
-        // Клик по карточке
         document.querySelectorAll('.project-card').forEach(card => {
           card.onclick = () => {
             const id = card.dataset.id;
@@ -336,20 +326,15 @@
         <div class="hero">
           <h1><i class="fa-solid fa-dharmachakra" style="color:var(--accent);"></i> DevDock</h1>
           <p>Создавай, управляй и хости свои проекты в одном месте. Конструктор ботов, сайтов и скриптов с интеграцией GitHub.</p>
-          <button class="btn btn-github" id="loginBtn"><i class="fa-brands fa-github"></i> Войти через GitHub</button>
+          <button class="btn btn-google" id="loginBtn"><i class="fa-brands fa-google"></i> Войти через Google</button>
           <p style="margin-top:16px;font-size:13px;color:var(--muted);">Нет аккаунта? Он создастся автоматически при входе.</p>
         </div>`;
       document.getElementById('loginBtn').onclick = async () => {
-        const provider = new GithubAuthProvider();
-        provider.addScope('repo');
+        const provider = new GoogleAuthProvider();
         try {
           await signInWithPopup(auth, provider);
         } catch (e) {
-          if (e.code === 'auth/account-exists-with-different-credential') {
-            alert('Аккаунт уже существует с другим способом входа.');
-          } else {
-            alert('Ошибка входа: ' + e.message);
-          }
+          alert('Ошибка входа: ' + e.message);
         }
       };
     }
