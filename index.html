@@ -1,574 +1,1041 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-  <title>DevDock — Управление и аналитика для ботов и сайтов</title>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
-  <style>
-    :root {
-      --bg: #0d1117; --card: #161b22; --border: #30363d;
-      --text: #c9d1d9; --muted: #8b949e; --accent: #58a6ff;
-      --accent-hover: #79b8ff; --green: #3fb950; --red: #f85149;
-      --orange: #d2991d; --purple: #a371f7; --shadow: 0 2px 8px rgba(0,0,0,0.4); --radius: 8px;
-    }
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif; background: var(--bg); color: var(--text); line-height: 1.5; min-height: 100vh; display: flex; flex-direction: column; }
-    a { color: var(--accent); text-decoration: none; }
-    a:hover { text-decoration: underline; }
-    .navbar { background: var(--card); border-bottom: 1px solid var(--border); padding: 14px 24px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; position: sticky; top: 0; z-index: 50; }
-    .navbar .logo { font-size: 1.5rem; font-weight: 700; display: flex; align-items: center; gap: 8px; cursor: pointer; }
-    .navbar .logo i { color: var(--accent); }
-    .nav-links { display: flex; gap: 24px; align-items: center; }
-    .nav-links a { color: var(--muted); font-weight: 500; transition: color 0.2s; font-size: 0.95rem; }
-    .nav-links a:hover, .nav-links a.active { color: var(--text); }
-    .user-menu { display: flex; align-items: center; gap: 12px; }
-    .user-menu img { width: 36px; height: 36px; border-radius: 50%; border: 2px solid var(--border); }
-    .user-menu button { background: transparent; color: var(--text); border: 1px solid var(--border); padding: 8px 14px; border-radius: 6px; cursor: pointer; transition: 0.2s; }
-    .user-menu button:hover { background: #1f2937; }
-    .container { max-width: 1280px; margin: 0 auto; padding: 24px 20px; width: 100%; flex: 1; }
-    .page-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; flex-wrap: wrap; gap: 12px; }
-    .page-header h2 { font-size: 1.8rem; display: flex; align-items: center; gap: 10px; }
-    .btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 10px 20px; font-size: 0.9rem; font-weight: 600; border-radius: 6px; cursor: pointer; border: none; transition: all 0.2s; white-space: nowrap; }
-    .btn-google { background: #fff; color: #1f1f1f; } .btn-google:hover { background: #e8e8e8; }
-    .btn-github { background: #24292f; color: #fff; } .btn-github:hover { background: #2b3138; }
-    .btn-primary { background: var(--accent); color: #fff; } .btn-primary:hover { background: var(--accent-hover); }
-    .btn-success { background: var(--green); color: #fff; } .btn-success:hover { opacity: 0.9; }
-    .btn-danger { background: var(--red); color: #fff; } .btn-danger:hover { opacity: 0.9; }
-    .btn-outline { background: transparent; border: 1px solid var(--border); color: var(--text); } .btn-outline:hover { background: #1f2937; }
-    .btn-sm { padding: 6px 12px; font-size: 0.8rem; }
-    .btn-xs { padding: 4px 8px; font-size: 0.7rem; }
-    .card { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px; transition: all 0.2s; }
-    .card:hover { border-color: var(--accent); box-shadow: var(--shadow); }
-    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px; }
-    .tabs { display: flex; gap: 8px; margin-bottom: 20px; flex-wrap: wrap; }
-    .tab { padding: 8px 16px; background: var(--card); border: 1px solid var(--border); border-radius: 6px; cursor: pointer; font-size: 0.9rem; }
-    .tab.active { background: var(--accent); border-color: var(--accent); color: #fff; }
-    input, textarea, select { width: 100%; padding: 10px 12px; background: var(--bg); border: 1px solid var(--border); border-radius: 6px; color: var(--text); font-size: 0.9rem; outline: none; transition: border 0.2s; }
-    input:focus, textarea:focus, select:focus { border-color: var(--accent); }
-    label { display: block; font-size: 0.85rem; color: var(--muted); margin-bottom: 4px; }
-    .badge { display: inline-block; padding: 2px 8px; border-radius: 12px; font-size: 0.7rem; font-weight: 600; }
-    .badge-success { background: var(--green); color: #fff; }
-    .badge-danger { background: var(--red); color: #fff; }
-    .badge-warning { background: var(--orange); color: #000; }
-    .badge-accent { background: var(--accent); color: #fff; }
-    .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.7); display: flex; align-items: center; justify-content: center; z-index: 1000; }
-    .modal { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 24px; width: 90%; max-width: 520px; max-height: 90vh; overflow-y: auto; }
-    .modal h3 { margin-bottom: 16px; }
-    .modal .actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 16px; }
-    .toast { position: fixed; bottom: 24px; right: 24px; background: var(--green); color: #fff; padding: 12px 20px; border-radius: 8px; z-index: 2000; animation: slideUp 0.3s ease; }
-    @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
-    .level-bar { background: var(--border); border-radius: 10px; height: 8px; overflow: hidden; }
-    .level-fill { background: var(--accent); height: 100%; border-radius: 10px; transition: width 0.3s; }
-    .chart-box { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px; }
-    .empty-state { text-align: center; padding: 60px 20px; color: var(--muted); }
-    .empty-state i { font-size: 3rem; margin-bottom: 16px; }
-    .status-dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
-    .status-online { background: var(--green); animation: pulse 1.5s infinite; }
-    .status-offline { background: var(--muted); }
-    @keyframes pulse { 0%,100% { opacity:1; } 50% { opacity:0.3; } }
-    @media (max-width: 768px) { .navbar { flex-direction: column; align-items: flex-start; } .nav-links { gap: 12px; flex-wrap: wrap; } .page-header { flex-direction: column; align-items: flex-start; } }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DevDock - Хостинг Telegram ботов</title>
+    
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-storage-compat.js"></script>
+    
+    <style>
+        :root {
+            --bg: #060b14;
+            --surface: #0d1525;
+            --card: #111b2e;
+            --primary: #3b82f6;
+            --primary-hover: #2563eb;
+            --green: #10b981;
+            --green-bg: rgba(16,185,129,0.15);
+            --red: #ef4444;
+            --red-bg: rgba(239,68,68,0.15);
+            --purple: #8b5cf6;
+            --yellow: #f59e0b;
+            --text: #e2e8f0;
+            --text-secondary: #94a3b8;
+            --border: #1e293b;
+            --radius: 14px;
+            --radius-sm: 8px;
+            --shadow: 0 4px 24px rgba(0,0,0,0.4);
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            line-height: 1.5;
+        }
+
+        /* Login Screen */
+        .login-screen {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            flex-direction: column;
+            gap: 2rem;
+            padding: 1rem;
+        }
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+        }
+        .logo svg { width: 56px; height: 56px; }
+        .logo h1 {
+            font-size: 2.8rem;
+            font-weight: 800;
+            letter-spacing: -1px;
+            background: linear-gradient(135deg, #60a5fa, #a78bfa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .login-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 2.5rem;
+            width: 100%;
+            max-width: 420px;
+            text-align: center;
+            box-shadow: var(--shadow);
+        }
+        .login-card h2 {
+            margin-bottom: 1.8rem;
+            font-size: 1.4rem;
+            color: var(--text-secondary);
+        }
+        .auth-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+            width: 100%;
+            padding: 0.9rem 1.5rem;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            background: var(--card);
+            color: var(--text);
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            margin-bottom: 0.8rem;
+            transition: all 0.2s;
+            font-family: inherit;
+        }
+        .auth-btn:hover {
+            border-color: var(--primary);
+            background: rgba(59,130,246,0.08);
+            transform: translateY(-1px);
+        }
+        .auth-btn svg { width: 22px; height: 22px; flex-shrink: 0; }
+
+        /* App Layout */
+        .app {
+            display: flex;
+            height: 100vh;
+        }
+        .sidebar {
+            width: 270px;
+            background: var(--surface);
+            border-right: 1px solid var(--border);
+            padding: 1.5rem 1rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.3rem;
+            flex-shrink: 0;
+        }
+        .sidebar .logo-small {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem;
+            margin-bottom: 1rem;
+        }
+        .sidebar .logo-small svg { width: 34px; height: 34px; }
+        .sidebar .logo-small span {
+            font-weight: 700;
+            font-size: 1.3rem;
+            background: linear-gradient(135deg, #60a5fa, #a78bfa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            padding: 0.8rem;
+            background: var(--card);
+            border-radius: var(--radius-sm);
+            margin-bottom: 0.5rem;
+            border: 1px solid var(--border);
+        }
+        .user-avatar {
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            border: 2px solid var(--primary);
+        }
+        .user-name {
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+        .user-email {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+        }
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            padding: 0.7rem 1rem;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            color: var(--text-secondary);
+            transition: all 0.15s;
+            font-weight: 500;
+            font-size: 0.95rem;
+            border: none;
+            background: none;
+            width: 100%;
+            text-align: left;
+            font-family: inherit;
+        }
+        .nav-item:hover {
+            background: var(--card);
+            color: var(--text);
+        }
+        .nav-item.active {
+            background: var(--card);
+            color: var(--primary);
+            border: 1px solid var(--border);
+        }
+        .nav-item svg {
+            width: 20px;
+            height: 20px;
+            flex-shrink: 0;
+        }
+        .nav-item.logout-btn {
+            margin-top: auto;
+            color: var(--red);
+        }
+        .nav-item.logout-btn:hover {
+            background: var(--red-bg);
+            border-color: var(--red);
+        }
+
+        /* Main Content */
+        .main {
+            flex: 1;
+            padding: 2rem;
+            overflow-y: auto;
+            background: var(--bg);
+        }
+        .page {
+            display: none;
+        }
+        .page.active {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+        .stat-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            box-shadow: var(--shadow);
+        }
+        .stat-card svg {
+            width: 44px;
+            height: 44px;
+            flex-shrink: 0;
+        }
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            line-height: 1;
+        }
+        .stat-label {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            margin-top: 0.2rem;
+        }
+
+        /* Bot Cards */
+        .section-title {
+            font-size: 1.15rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .bot-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+            gap: 1rem;
+        }
+        .bot-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 1.5rem;
+            box-shadow: var(--shadow);
+            transition: all 0.2s;
+        }
+        .bot-card:hover {
+            border-color: var(--primary);
+        }
+        .bot-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 0.8rem;
+        }
+        .bot-name {
+            font-weight: 700;
+            font-size: 1.1rem;
+        }
+        .status-badge {
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            white-space: nowrap;
+        }
+        .status-badge.online {
+            background: var(--green-bg);
+            color: var(--green);
+        }
+        .status-badge.offline {
+            background: var(--red-bg);
+            color: var(--red);
+        }
+        .bot-meta {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            margin-bottom: 0.3rem;
+        }
+        .bot-stats {
+            display: flex;
+            gap: 1rem;
+            margin: 0.8rem 0;
+            font-size: 0.85rem;
+        }
+        .bot-stats span {
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+        .actions {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 1rem;
+            flex-wrap: wrap;
+        }
+        button {
+            padding: 0.5rem 1.2rem;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            background: var(--card);
+            color: var(--text);
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.85rem;
+            transition: all 0.15s;
+            font-family: inherit;
+        }
+        button:hover {
+            filter: brightness(1.2);
+            transform: translateY(-1px);
+        }
+        button.primary {
+            background: var(--primary);
+            border-color: var(--primary);
+        }
+        button.success {
+            background: var(--green);
+            border-color: var(--green);
+        }
+        button.danger {
+            background: transparent;
+            border-color: var(--red);
+            color: var(--red);
+        }
+        button.danger:hover {
+            background: var(--red-bg);
+        }
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* Forms */
+        .form-group {
+            margin-bottom: 1.2rem;
+        }
+        label {
+            display: block;
+            font-weight: 600;
+            font-size: 0.9rem;
+            margin-bottom: 0.4rem;
+            color: var(--text-secondary);
+        }
+        input, textarea, select {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            color: var(--text);
+            font-size: 0.95rem;
+            font-family: inherit;
+            transition: border-color 0.15s;
+        }
+        input:focus, textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+        textarea {
+            resize: vertical;
+            min-height: 120px;
+            font-family: 'Fira Code', 'Consolas', monospace;
+            font-size: 0.85rem;
+        }
+        .file-upload-zone {
+            border: 2px dashed var(--border);
+            border-radius: var(--radius);
+            padding: 2.5rem 1.5rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            color: var(--text-secondary);
+            background: var(--surface);
+        }
+        .file-upload-zone:hover {
+            border-color: var(--primary);
+            background: rgba(59,130,246,0.03);
+        }
+        .file-upload-zone svg {
+            width: 44px;
+            height: 44px;
+            margin-bottom: 0.5rem;
+        }
+        .file-upload-zone small {
+            color: var(--text-secondary);
+        }
+        .file-info {
+            margin-top: 0.5rem;
+            font-size: 0.85rem;
+            color: var(--green);
+            font-weight: 500;
+        }
+
+        /* Logs */
+        .logs-box {
+            background: #05080f;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            padding: 1rem 1.2rem;
+            height: 400px;
+            overflow-y: auto;
+            font-family: 'Fira Code', 'Consolas', monospace;
+            font-size: 0.8rem;
+            color: #a3e635;
+            white-space: pre-wrap;
+            word-break: break-all;
+        }
+
+        /* Toast */
+        .toast {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            padding: 1rem 1.5rem;
+            border-radius: var(--radius-sm);
+            color: white;
+            font-weight: 600;
+            z-index: 9999;
+            animation: slideUp 0.3s ease;
+            box-shadow: var(--shadow);
+        }
+        @keyframes slideUp {
+            from { transform: translateY(100px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        .toast.success { background: var(--green); }
+        .toast.error { background: var(--red); }
+        .toast.info { background: var(--primary); }
+
+        /* Hidden */
+        .hidden { display: none !important; }
+
+        /* Loading spinner */
+        .spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 2px solid transparent;
+            border-top-color: currentColor;
+            border-radius: 50%;
+            animation: spin 0.6s linear infinite;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .app { flex-direction: column; }
+            .sidebar { width: 100%; height: auto; flex-direction: row; flex-wrap: wrap; padding: 0.8rem; gap: 0.3rem; }
+            .sidebar .logo-small, .sidebar .user-info { display: none; }
+            .main { padding: 1rem; }
+            .bot-grid { grid-template-columns: 1fr; }
+            .stats-grid { grid-template-columns: 1fr 1fr; }
+        }
+    </style>
 </head>
 <body>
-  <nav class="navbar">
-    <div class="logo" onclick="navigate('dashboard')"><i class="fa-solid fa-dharmachakra"></i>DevDock</div>
-    <div class="nav-links">
-      <a href="#" data-page="dashboard" class="active">Проекты</a>
-      <a href="#" data-page="tops">Топы</a>
-      <a href="#" data-page="marketplace">Маркетплейс</a>
-      <a href="#" data-page="profile">Профиль</a>
-    </div>
-    <div class="user-menu" id="userMenu"></div>
-  </nav>
-  <div class="container" id="app"><div class="empty-state"><i class="fa-solid fa-spinner fa-pulse"></i><p>Загрузка...</p></div></div>
-
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-    import { getAuth, signInWithPopup, GoogleAuthProvider, GithubAuthProvider, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-    import { getDatabase, ref, set, push, onValue, remove, serverTimestamp, update, get } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
-    import { getFirestore, collection, addDoc, query, orderBy, limit, onSnapshot, doc as fsDoc, updateDoc, deleteDoc, getDocs, where } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
-
-    const firebaseConfig = {
-      apiKey: "AIzaSyCQlvzosVihEhlF2W-jE2DcYViqHXwT4YM",
-      authDomain: "devdock-5cb61.firebaseapp.com",
-      projectId: "devdock-5cb61",
-      storageBucket: "devdock-5cb61.firebasestorage.app",
-      messagingSenderId: "866582930096",
-      appId: "1:866582930096:web:6521525247be0ef271d175"
-    };
-
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-    const rtdb = getDatabase(app);
-    const firestore = getFirestore(app);
-
-    let currentUser = null;
-    let currentPage = 'dashboard';
-    let currentProjectId = null;
-    let chartInstance = null;
-
-    // ========== УТИЛИТЫ ==========
-    function toast(msg, type = 'success') {
-      const t = document.createElement('div'); t.className = 'toast';
-      t.style.background = type === 'error' ? 'var(--red)' : 'var(--green)';
-      t.textContent = msg; document.body.appendChild(t); setTimeout(() => t.remove(), 3000);
-    }
-
-    function formatDate(ts) {
-      if (!ts) return '—';
-      if (ts.toDate) ts = ts.toDate();
-      return new Date(ts).toLocaleDateString('ru-RU', { day:'numeric', month:'short', year:'numeric', hour:'2-digit', minute:'2-digit' });
-    }
-
-    function modal(title, fields, cb) {
-      const overlay = document.createElement('div'); overlay.className = 'modal-overlay';
-      const formHtml = fields.map(f => {
-        if (f.type === 'custom') return f.html;
-        let inputHtml = '';
-        if (f.type === 'textarea') inputHtml = `<textarea id="modal_${f.id}" placeholder="${f.placeholder||''}" rows="3">${f.value||''}</textarea>`;
-        else if (f.type === 'select') inputHtml = `<select id="modal_${f.id}">${f.options.map(o => `<option value="${o}" ${o===f.value?'selected':''}>${o}</option>`).join('')}</select>`;
-        else inputHtml = `<input type="${f.type||'text'}" id="modal_${f.id}" placeholder="${f.placeholder||''}" value="${f.value||''}" />`;
-        return `<label>${f.label||''}</label>${inputHtml}`;
-      }).join('');
-      overlay.innerHTML = `<div class="modal"><h3>${title}</h3>${formHtml}<div class="actions"><button class="btn btn-outline btn-sm" id="modalCancel">Отмена</button><button class="btn btn-primary btn-sm" id="modalOk">ОК</button></div></div>`;
-      document.body.appendChild(overlay);
-      document.getElementById('modalCancel').onclick = () => overlay.remove();
-      document.getElementById('modalOk').onclick = () => {
-        const vals = {};
-        fields.filter(f => f.type !== 'custom').forEach(f => {
-          const el = document.getElementById(`modal_${f.id}`);
-          vals[f.id] = el?.value?.trim() || '';
-        });
-        overlay.remove(); if (cb) cb(vals);
-      };
-      overlay.addEventListener('click', e => { if (e.target === overlay) overlay.remove(); });
-    }
-
-    window.navigate = (page, projectId = null) => {
-      currentPage = page; currentProjectId = projectId;
-      document.querySelectorAll('.nav-links a').forEach(a => a.classList.remove('active'));
-      const link = document.querySelector(`.nav-links a[data-page="${page}"]`);
-      if (link) link.classList.add('active');
-      if (currentUser) renderPage();
-    };
-
-    async function checkBotToken(token) {
-      try { const r = await fetch(`https://api.telegram.org/bot${token}/getMe`); const d = await r.json(); return d.ok ? d.result : null; }
-      catch { return null; }
-    }
-
-    async function modifyUser(delta) {
-      const userRef = ref(rtdb, `users/${currentUser.uid}`);
-      const snap = await get(userRef);
-      if (!snap.exists()) return;
-      const data = snap.val();
-      const updates = {};
-      if (delta.dkc) updates.dkc = (data.dkc || 0) + delta.dkc;
-      if (delta.xp) { updates.xp = (data.xp || 0) + delta.xp; const newLevel = Math.floor(updates.xp / 100) + 1; if (newLevel > (data.level || 1)) updates.level = newLevel; }
-      await update(userRef, updates);
-      if (delta.dkc && delta.description) {
-        await addDoc(collection(firestore, `transactions/${currentUser.uid}/items`), { amount: delta.dkc, description: delta.description, createdAt: new Date() });
-      }
-    }
-
-    // ========== AUTH ==========
-    async function handleUser(user) {
-      currentUser = user;
-      const menuEl = document.getElementById('userMenu');
-      if (user) {
-        menuEl.innerHTML = `<span style="font-weight:500;">${user.displayName||user.email}</span>
-          <img src="${user.photoURL||''}" alt="avatar" referrerpolicy="no-referrer" />
-          <button id="logoutBtn"><i class="fa-solid fa-right-from-bracket"></i></button>
-          ${user.email === 'admin@devdock.ru' ? '<button class="btn btn-sm btn-outline" onclick="navigate(\'admin\')">Админ</button>' : ''}`;
-        document.getElementById('logoutBtn').onclick = () => signOut(auth);
-        const userRef = ref(rtdb, `users/${user.uid}`);
-        const snap = await get(userRef);
-        if (!snap.exists()) {
-          await set(userRef, {
-            email: user.email, displayName: user.displayName, photoURL: user.photoURL,
-            username: '', bio: '', level: 1, xp: 0, dkc: 100,
-            totalUsers: 0, totalProjects: 0, badges: {}, role: 'user',
-            referralCode: user.uid.substring(0, 6), createdAt: serverTimestamp()
-          });
-        }
-        renderPage();
-      } else {
-        menuEl.innerHTML = '';
-        renderLanding();
-      }
-    }
-
-    function renderLanding() {
-      document.querySelector('.nav-links').style.visibility = 'hidden';
-      document.getElementById('app').innerHTML = `
-        <div style="text-align:center;padding:100px 20px;">
-          <h1 style="font-size:3rem;"><i class="fa-solid fa-dharmachakra" style="color:var(--accent);"></i> DevDock</h1>
-          <p style="font-size:1.2rem; color:var(--muted); max-width:600px; margin:16px auto;">
-            Управление, статистика и аналитика для Telegram-ботов и веб-сайтов. Следите за ростом в реальном времени.
-          </p>
-          <div style="display:flex; gap:12px; justify-content:center; margin-top:24px; flex-wrap:wrap;">
-            <button class="btn btn-google" id="loginGoogle"><i class="fa-brands fa-google"></i> Google</button>
-            <button class="btn btn-github" id="loginGithub"><i class="fa-brands fa-github"></i> GitHub</button>
-          </div>
-        </div>`;
-      document.getElementById('loginGoogle').onclick = () => signInWithPopup(auth, new GoogleAuthProvider());
-      document.getElementById('loginGithub').onclick = () => signInWithPopup(auth, new GithubAuthProvider());
-    }
-
-    function renderPage() {
-      if (!currentUser) { renderLanding(); return; }
-      document.querySelector('.nav-links').style.visibility = 'visible';
-      const container = document.getElementById('app');
-      switch(currentPage) {
-        case 'dashboard': renderDashboard(container); break;
-        case 'projectDetail': renderProjectDetail(container); break;
-        case 'tops': renderTops(container); break;
-        case 'marketplace': renderMarketplace(container); break;
-        case 'profile': renderProfile(container); break;
-        case 'admin': renderAdmin(container); break;
-        default: renderDashboard(container);
-      }
-    }
-
-    // ========== DASHBOARD ==========
-    function renderDashboard(container) {
-      container.innerHTML = `
-        <div class="page-header">
-          <h2><i class="fa-solid fa-folder-open"></i> Мои проекты</h2>
-          <button class="btn btn-primary" id="addProjectBtn"><i class="fa-solid fa-plus"></i> Добавить проект</button>
+    <!-- Login Screen -->
+    <div id="loginScreen" class="login-screen">
+        <div class="logo">
+            <svg viewBox="0 0 56 56" fill="none">
+                <rect width="56" height="56" rx="14" fill="#3b82f6"/>
+                <path d="M16 28l7 7 16-16" stroke="white" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
+                <circle cx="28" cy="28" r="2.5" fill="white"/>
+                <rect x="14" y="14" width="28" height="28" rx="6" stroke="white" stroke-width="1.5" opacity="0.4"/>
+            </svg>
+            <h1>DevDock</h1>
         </div>
-        <div class="grid" id="projectsGrid"></div>`;
+        <div class="login-card">
+            <h2>Войдите, чтобы управлять ботами</h2>
+            <button class="auth-btn" id="googleLoginBtn" onclick="signInWithGoogle()">
+                <svg viewBox="0 0 24 24">
+                    <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 01-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z"/>
+                    <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                    <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+                    <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+                </svg>
+                Войти через Google
+            </button>
+            <button class="auth-btn" onclick="signInWithGitHub()">
+                <svg viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 0C5.37 0 0 5.37 0 12c0 5.3 3.438 9.8 8.205 11.387.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.73.083-.73 1.205.085 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.418-1.305.762-1.604-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 21.795 24 17.295 24 12 24 5.37 18.63 0 12 0z"/>
+                </svg>
+                Войти через GitHub
+            </button>
+        </div>
+    </div>
 
-      document.getElementById('addProjectBtn').onclick = () => {
-        modal('Новый проект', [
-          {label:'Название', id:'name', placeholder:'Мой бот или сайт'},
-          {label:'Тип', id:'type', type:'select', options:['🤖 Telegram бот', '🌐 Веб-сайт']},
-          {label:'Токен (только для ботов)', id:'token', placeholder:'123456:ABC...'},
-          {label:'Описание', id:'desc', type:'textarea'}
-        ], async (vals) => {
-          if (!vals.name) return toast('Введите название', 'error');
-          let botInfo = null;
-          if (vals.type === '🤖 Telegram бот' && vals.token) {
-            botInfo = await checkBotToken(vals.token);
-            if (!botInfo) return toast('Неверный токен', 'error');
-          }
-          const projectRef = push(ref(rtdb, `projects/${currentUser.uid}`));
-          const apiKey = 'dk_' + Math.random().toString(36).substring(2, 18);
-          await set(projectRef, {
-            name: vals.name, type: vals.type, token: vals.token || null,
-            description: vals.desc, apiKey,
-            botUsername: botInfo?.username || null, botFirstName: botInfo?.first_name || null,
-            commands: [], stats: { users: 0, messages: 0, daily: {} },
-            status: 'offline', lastPing: null, createdAt: serverTimestamp()
-          });
-          await modifyUser({ dkc: 50, xp: 10, description: 'Создание проекта' });
-          toast(`Проект создан! +50 DKC`);
-        });
-      };
-
-      onValue(ref(rtdb, `projects/${currentUser.uid}`), snap => {
-        const grid = document.getElementById('projectsGrid');
-        const data = snap.val();
-        if (!data) { grid.innerHTML = '<div class="empty-state"><i class="fa-solid fa-folder-open"></i><p>Нет проектов</p></div>'; return; }
-        grid.innerHTML = Object.entries(data).map(([id, p]) => `
-          <div class="card" style="cursor:pointer;" onclick="navigate('projectDetail','${id}')">
-            <div style="display:flex; justify-content:space-between; align-items:start;">
-              <h3>${p.type==='🌐 Веб-сайт' ? '🌐' : '🤖'} ${p.name}</h3>
-              <span class="status-dot ${p.status==='online'?'status-online':'status-offline'}"></span>
+    <!-- Main App -->
+    <div id="app" class="app hidden">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="logo-small">
+                <svg viewBox="0 0 56 56" fill="none">
+                    <rect width="56" height="56" rx="14" fill="#3b82f6"/>
+                    <path d="M16 28l7 7 16-16" stroke="white" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                <span>DevDock</span>
             </div>
-            <p style="color:var(--muted); font-size:0.85rem;">${p.description||''}</p>
-            <div style="margin-top:8px; display:flex; gap:12px; color:var(--muted); font-size:0.8rem;">
-              <span><i class="fa-solid fa-users"></i> ${p.stats?.users||0}</span>
-              <span><i class="fa-solid fa-comment"></i> ${p.stats?.messages||0}</span>
+            <div class="user-info" id="sidebarUserInfo"></div>
+            <button class="nav-item active" data-page="dashboard">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>
+                Дашборд
+            </button>
+            <button class="nav-item" data-page="bots">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="3"/><path d="M12 2v4M12 18v4M2 12h4M18 12h4"/></svg>
+                Мои боты
+            </button>
+            <button class="nav-item" data-page="addbot">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+                Новый бот
+            </button>
+            <button class="nav-item" data-page="logs">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+                Логи
+            </button>
+            <button class="nav-item logout-btn" onclick="signOut()">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+                Выйти
+            </button>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main">
+            <!-- Dashboard Page -->
+            <div class="page active" id="page-dashboard">
+                <div class="stats-grid" id="statsGrid">
+                    <div class="stat-card">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="3"/></svg>
+                        <div><div class="stat-value" id="statTotalBots">0</div><div class="stat-label">Всего ботов</div></div>
+                    </div>
+                    <div class="stat-card">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+                        <div><div class="stat-value" id="statOnlineBots">0</div><div class="stat-label">Активных</div></div>
+                    </div>
+                    <div class="stat-card">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="var(--purple)" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+                        <div><div class="stat-value" id="statMessages">0</div><div class="stat-label">Сообщений</div></div>
+                    </div>
+                    <div class="stat-card">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="var(--red)" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                        <div><div class="stat-value" id="statErrors">0</div><div class="stat-label">Ошибок за 24ч</div></div>
+                    </div>
+                </div>
+                <div class="section-title">📋 Последние боты</div>
+                <div class="bot-grid" id="recentBots">
+                    <p style="color: var(--text-secondary);">Загрузка...</p>
+                </div>
             </div>
-          </div>`).join('');
-      });
-    }
 
-    // ========== PROJECT DETAIL ==========
-    function renderProjectDetail(container) {
-      const projectRef = ref(rtdb, `projects/${currentUser.uid}/${currentProjectId}`);
-      get(projectRef).then(snap => {
-        const project = snap.val();
-        if (!project) { toast('Проект не найден'); navigate('dashboard'); return; }
-        container.innerHTML = `
-          <div class="page-header">
-            <h2><i class="fa-solid fa-arrow-left" onclick="navigate('dashboard')" style="cursor:pointer;"></i> ${project.name}</h2>
-            <div>
-              <button class="btn btn-sm btn-outline" id="editBtn"><i class="fa-solid fa-pen"></i></button>
-              <button class="btn btn-sm btn-danger" id="deleteBtn"><i class="fa-solid fa-trash"></i></button>
+            <!-- Bots Page -->
+            <div class="page" id="page-bots">
+                <div class="section-title">🤖 Все боты</div>
+                <div class="bot-grid" id="allBots">
+                    <p style="color: var(--text-secondary);">Загрузка...</p>
+                </div>
             </div>
-          </div>
-          <div class="tabs">
-            <div class="tab active" data-tab="overview">Обзор</div>
-            ${project.type === '🤖 Telegram бот' ? '<div class="tab" data-tab="commands">Команды</div>' : ''}
-            <div class="tab" data-tab="stats">Статистика</div>
-            <div class="tab" data-tab="integration">Интеграция</div>
-          </div>
-          <div id="tabContent"></div>`;
 
-        const tabContent = document.getElementById('tabContent');
-        const tabs = document.querySelectorAll('.tab');
-        let currentTab = 'overview';
-
-        function switchTab(tab) {
-          currentTab = tab;
-          tabs.forEach(t => t.classList.remove('active'));
-          document.querySelector(`[data-tab="${tab}"]`).classList.add('active');
-          if (tab === 'overview') renderOverview();
-          else if (tab === 'commands') renderCommands();
-          else if (tab === 'stats') renderStats();
-          else if (tab === 'integration') renderIntegration();
-        }
-        tabs.forEach(t => t.addEventListener('click', () => switchTab(t.dataset.tab)));
-
-        function renderOverview() {
-          tabContent.innerHTML = `
-            <div class="card"><strong>Тип:</strong> ${project.type}</div>
-            <div class="card"><strong>Статус:</strong> <span class="status-dot ${project.status==='online'?'status-online':'status-offline'}"></span> ${project.status==='online'?'Онлайн':'Офлайн'}</div>
-            <div class="card"><strong>Пользователей:</strong> ${project.stats?.users||0}</div>
-            <div class="card"><strong>Сообщений:</strong> ${project.stats?.messages||0}</div>
-            ${project.lastPing ? `<div class="card"><strong>Последняя активность:</strong> ${formatDate(project.lastPing)}</div>` : ''}`;
-        }
-
-        function renderCommands() {
-          const cmds = project.commands || [];
-          tabContent.innerHTML = `
-            <button class="btn btn-sm btn-primary" id="addCmd"><i class="fa-solid fa-plus"></i> Добавить</button>
-            <div style="margin-top:12px;">${cmds.length===0?'<p class="empty-state">Нет команд</p>':cmds.map((c,i)=>`<div class="card"><strong>/${c.command}</strong> → ${c.response||'...'} <button class="btn btn-xs btn-danger" data-idx="${i}"><i class="fa-solid fa-trash"></i></button></div>`).join('')}</div>`;
-          document.getElementById('addCmd').onclick = () => modal('Новая команда', [
-            {label:'Команда', id:'cmd', placeholder:'start'},
-            {label:'Ответ', id:'resp', type:'textarea'}
-          ], async v => {
-            if (!v.cmd) return;
-            await update(projectRef, { commands: [...cmds, {command:v.cmd, response:v.resp}] });
-            toast('Добавлено'); switchTab('commands');
-          });
-          document.querySelectorAll('[data-idx]').forEach(b => b.onclick = async () => {
-            cmds.splice(parseInt(b.dataset.idx), 1);
-            await update(projectRef, { commands: cmds });
-            toast('Удалено'); switchTab('commands');
-          });
-        }
-
-        function renderStats() {
-          tabContent.innerHTML = `
-            <div class="chart-box"><canvas id="statsChart"></canvas></div>
-            <div style="margin-top:16px;"><strong>👥 ${project.stats?.users||0}</strong> пользователей | <strong>💬 ${project.stats?.messages||0}</strong> сообщений</div>`;
-          if (chartInstance) chartInstance.destroy();
-          const ctx = document.getElementById('statsChart').getContext('2d');
-          chartInstance = new Chart(ctx, {
-            type: 'line',
-            data: { labels: ['Пн','Вт','Ср','Чт','Пт','Сб','Вс'], datasets: [{ label: 'Активность', data: [0,0,0,0,0,0,0], borderColor: '#58a6ff', tension:0.3 }] },
-            options: { scales: { y: { beginAtZero: true } } }
-          });
-        }
-
-        function renderIntegration() {
-          tabContent.innerHTML = `
-            <div class="card">
-              <h4>API-ключ</h4>
-              <code>${project.apiKey}</code>
+            <!-- Add Bot Page -->
+            <div class="page" id="page-addbot">
+                <div class="section-title">➕ Новый Telegram бот</div>
+                <form id="addBotForm" style="max-width: 650px;">
+                    <div class="form-group">
+                        <label>Имя бота</label>
+                        <input type="text" id="botName" placeholder="Мой эхо-бот" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Токен бота (от @BotFather)</label>
+                        <input type="text" id="botToken" placeholder="1234567890:ABCdefGHIjklMNOpqrsTUVwxyz" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Код бота (Python)</label>
+                        <div class="file-upload-zone" id="uploadZone">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                            <p>Нажмите или перетащите файл</p>
+                            <small>.py, .zip (до 10 МБ)</small>
+                        </div>
+                        <input type="file" id="fileInput" accept=".py,.zip" hidden>
+                        <div class="file-info" id="fileInfo"></div>
+                    </div>
+                    <button type="submit" class="primary" style="width:100%; padding:0.9rem;">
+                        🚀 Запустить бота
+                    </button>
+                </form>
+                <div id="addBotStatus" style="margin-top:1rem;"></div>
             </div>
-            <div class="card">
-              <h4>Как отправлять статистику</h4>
-              <pre style="background:var(--bg);padding:12px;border-radius:6px;overflow-x:auto;">fetch('https://YOUR_FUNCTION_URL/api/stats', {
-  method: 'POST',
-  headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ${project.apiKey}' },
-  body: JSON.stringify({
-    event: 'message' | 'new_user' | 'command',
-    data: { userId: '...', ... }
-  })
-});</pre>
-            </div>`;
-        }
 
-        document.getElementById('editBtn').onclick = () => modal('Редактировать', [
-          {label:'Название', id:'name', value:project.name},
-          {label:'Описание', id:'desc', type:'textarea', value:project.description||''}
-        ], async v => { await update(projectRef, { name: v.name, description: v.desc }); toast('Сохранено'); renderProjectDetail(container); });
-        document.getElementById('deleteBtn').onclick = async () => {
-          if (confirm('Удалить проект?')) { await remove(projectRef); toast('Удалён'); navigate('dashboard'); }
+            <!-- Logs Page -->
+            <div class="page" id="page-logs">
+                <div class="section-title">📜 Системные логи</div>
+                <div class="logs-box" id="logBox">Загрузка логов...</div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Toast Container -->
+    <div id="toastContainer"></div>
+
+    <script>
+        // ============ FIREBASE INIT ============
+        const firebaseConfig = {
+            apiKey: "AIzaSyCQlvzosVihEhlF2W-jE2DcYViqHXwT4YM",
+            authDomain: "devdock-5cb61.firebaseapp.com",
+            databaseURL: "https://devdock-5cb61-default-rtdb.firebaseio.com",
+            projectId: "devdock-5cb61",
+            storageBucket: "devdock-5cb61.firebasestorage.app",
+            messagingSenderId: "866582930096",
+            appId: "1:866582930096:web:6521525247be0ef271d175",
+            measurementId: "G-HXT5YK3Y68"
         };
 
-        switchTab('overview');
-      });
-    }
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+        const storage = firebase.storage();
 
-    // ========== TOPS ==========
-    function renderTops(container) {
-      container.innerHTML = `<h2><i class="fa-solid fa-trophy"></i> Топ проектов</h2><div class="grid" id="topProjects"></div>
-        <h2 style="margin-top:32px;"><i class="fa-solid fa-user-tie"></i> Топ разработчиков</h2><div class="grid" id="topDevs"></div>`;
-      onValue(ref(rtdb, 'projects'), snap => {
-        const projects = []; snap.forEach(u => u.forEach(p => projects.push({...p.val(), uid: u.key})));
-        projects.sort((a,b) => (b.stats?.users||0) - (a.stats?.users||0));
-        document.getElementById('topProjects').innerHTML = projects.slice(0,10).map((p,i) => `<div class="card">${i+1}. ${p.name} — ${p.stats?.users||0} 👥</div>`).join('');
-      });
-      onValue(ref(rtdb, 'users'), snap => {
-        const devs = []; snap.forEach(u => { const d = u.val(); if(d.totalUsers) devs.push({name: d.displayName||d.email, users: d.totalUsers}); });
-        devs.sort((a,b) => b.users - a.users);
-        document.getElementById('topDevs').innerHTML = devs.slice(0,10).map((d,i) => `<div class="card">${i+1}. ${d.name} — ${d.users} 👥</div>`).join('');
-      });
-    }
+        // ============ GLOBAL STATE ============
+        let currentUser = null;
+        let botsCache = [];
+        let unsubscribeBots = null;
 
-    // ========== MARKETPLACE ==========
-    function renderMarketplace(container) {
-      container.innerHTML = `<h2>🛒 Маркетплейс шаблонов</h2><div class="grid" id="tmplGrid"></div>`;
-      onSnapshot(query(collection(firestore, "templates"), orderBy("createdAt","desc")), snap => {
-        document.getElementById('tmplGrid').innerHTML = snap.empty ? '<div class="empty-state">Нет шаблонов</div>' : '';
-        snap.forEach(doc => {
-          const t = doc.data();
-          document.getElementById('tmplGrid').innerHTML += `<div class="card"><h3>${t.name}</h3><p>${t.description||''}</p><p>💰 ${t.price||0} DKC</p><button class="btn btn-sm btn-primary">Купить</button></div>`;
+        // ============ AUTH ============
+        function signInWithGoogle() {
+            const provider = new firebase.auth.GoogleAuthProvider();
+            auth.signInWithPopup(provider).catch(handleAuthError);
+        }
+
+        function signInWithGitHub() {
+            const provider = new firebase.auth.GithubAuthProvider();
+            auth.signInWithPopup(provider).catch(handleAuthError);
+        }
+
+        function signOut() {
+            auth.signOut();
+        }
+
+        function handleAuthError(error) {
+            console.error('Auth error:', error);
+            toast('Ошибка входа: ' + (error.message || 'Неизвестная ошибка'), 'error');
+        }
+
+        // ============ AUTH STATE LISTENER ============
+        auth.onAuthStateChanged(user => {
+            if (user) {
+                currentUser = user;
+                document.getElementById('loginScreen').classList.add('hidden');
+                document.getElementById('app').classList.remove('hidden');
+                updateUserInfo();
+                subscribeToBots();
+                subscribeToLogs();
+                toast(`Добро пожаловать, ${user.displayName || user.email}!`, 'success');
+            } else {
+                currentUser = null;
+                document.getElementById('loginScreen').classList.remove('hidden');
+                document.getElementById('app').classList.add('hidden');
+                if (unsubscribeBots) unsubscribeBots();
+            }
         });
-      });
-    }
 
-    // ========== PROFILE ==========
-    async function renderProfile(container) {
-      const uSnap = await get(ref(rtdb, `users/${currentUser.uid}`));
-      const u = uSnap.val() || {};
-      container.innerHTML = `
-        <div class="card" style="max-width:600px;">
-          <div style="text-align:center;">
-            <img src="${currentUser.photoURL}" style="width:80px; border-radius:50%;" />
-            <h3>${currentUser.displayName}</h3><p>@${u.username||'нет'}</p><p>${u.bio||''}</p>
-            <p>⭐ Уровень ${u.level||1} (${u.xp||0} XP)</p>
-            <div class="level-bar"><div class="level-fill" style="width:${(u.xp%100)}%"></div></div>
-            <p style="margin-top:8px;">💰 <strong>${u.dkc||0} DKC</strong></p>
-            <button class="btn btn-sm btn-outline" onclick="editProfile()">Редактировать</button>
-          </div>
-          <h4 style="margin-top:16px;">🏅 Бейджи</h4>
-          <div>${Object.keys(u.badges||{}).map(b=>`<span class="badge badge-accent">${b}</span>`).join(' ')||'Нет'}</div>
-          <h4 style="margin-top:16px;">👥 Рефералы</h4>
-          <p>Код: <strong>${u.referralCode||''}</strong></p>
-          <p>Приглашено: ${u.referralCount||0} чел.</p>
-          <button class="btn btn-sm btn-primary" id="activatePromo">Промокод</button>
-        </div>
-        <h3 style="margin-top:24px;">История транзакций</h3>
-        <div id="txList"></div>`;
+        function updateUserInfo() {
+            if (!currentUser) return;
+            const avatar = currentUser.photoURL || '';
+            const name = currentUser.displayName || currentUser.email.split('@')[0];
+            const email = currentUser.email || '';
+            const html = `
+                <img src="${avatar}" class="user-avatar" onerror="this.style.display='none'">
+                <div>
+                    <div class="user-name">${escapeHtml(name)}</div>
+                    <div class="user-email">${escapeHtml(email)}</div>
+                </div>
+            `;
+            const sidebarInfo = document.getElementById('sidebarUserInfo');
+            if (sidebarInfo) sidebarInfo.innerHTML = html;
+        }
 
-      document.getElementById('activatePromo').onclick = () => {
-        modal('Промокод', [{label:'Код', id:'code', placeholder:'XXX-XXX'}], async v => {
-          const promoSnap = await get(ref(rtdb, `promocodes/${v.code}`));
-          if (!promoSnap.exists()) return toast('Не найден', 'error');
-          const promo = promoSnap.val();
-          if (promo.usedCount >= promo.maxUses) return toast('Лимит', 'error');
-          if (promo.expiresAt && Date.now() > promo.expiresAt) return toast('Истёк', 'error');
-          await update(ref(rtdb, `promocodes/${v.code}`), { usedCount: (promo.usedCount||0) + 1 });
-          await modifyUser({ dkc: promo.value, description: 'Промокод' });
-          toast(`+${promo.value} DKC!`); renderPage();
+        // ============ FIRESTORE SUBSCRIPTIONS ============
+        function subscribeToBots() {
+            if (!currentUser) return;
+            if (unsubscribeBots) unsubscribeBots();
+
+            unsubscribeBots = db.collection('bots')
+                .where('userId', '==', currentUser.uid)
+                .orderBy('createdAt', 'desc')
+                .onSnapshot(snapshot => {
+                    botsCache = [];
+                    snapshot.forEach(doc => {
+                        botsCache.push({ id: doc.id, ...doc.data() });
+                    });
+                    updateDashboard();
+                    updateBotsPage();
+                    updateStats();
+                }, error => {
+                    console.error('Bots subscription error:', error);
+                });
+        }
+
+        function subscribeToLogs() {
+            if (!currentUser) return;
+            db.collection('logs')
+                .where('userId', '==', currentUser.uid)
+                .orderBy('timestamp', 'desc')
+                .limit(100)
+                .onSnapshot(snapshot => {
+                    const logs = [];
+                    snapshot.forEach(doc => {
+                        const data = doc.data();
+                        logs.push(`[${new Date(data.timestamp?.toDate()).toLocaleTimeString()}] ${data.message}`);
+                    });
+                    const logBox = document.getElementById('logBox');
+                    if (logBox) {
+                        logBox.textContent = logs.join('\n') || 'Логи пусты...';
+                        logBox.scrollTop = 0;
+                    }
+                });
+        }
+
+        // ============ UI UPDATES ============
+        function updateStats() {
+            const totalBots = botsCache.length;
+            const onlineBots = botsCache.filter(b => b.status === 'online').length;
+            const totalMessages = botsCache.reduce((sum, b) => sum + (b.totalMessages || 0), 0);
+            const totalErrors = botsCache.reduce((sum, b) => sum + (b.errors24h || 0), 0);
+
+            document.getElementById('statTotalBots').textContent = totalBots;
+            document.getElementById('statOnlineBots').textContent = onlineBots;
+            document.getElementById('statMessages').textContent = totalMessages;
+            document.getElementById('statErrors').textContent = totalErrors;
+        }
+
+        function updateDashboard() {
+            const recentBots = botsCache.slice(0, 3);
+            const container = document.getElementById('recentBots');
+            if (recentBots.length === 0) {
+                container.innerHTML = '<p style="color: var(--text-secondary);">Нет ботов. <a href="#" onclick="navigateTo(\'addbot\')" style="color:var(--primary);">Создайте первого!</a></p>';
+                return;
+            }
+            container.innerHTML = recentBots.map(bot => botCardHTML(bot)).join('');
+        }
+
+        function updateBotsPage() {
+            const container = document.getElementById('allBots');
+            if (botsCache.length === 0) {
+                container.innerHTML = '<p style="color: var(--text-secondary);">Нет ботов. <a href="#" onclick="navigateTo(\'addbot\')" style="color:var(--primary);">Создайте первого!</a></p>';
+                return;
+            }
+            container.innerHTML = botsCache.map(bot => botCardHTML(bot)).join('');
+        }
+
+        function botCardHTML(bot) {
+            const isOnline = bot.status === 'online';
+            return `
+                <div class="bot-card">
+                    <div class="bot-header">
+                        <span class="bot-name">${escapeHtml(bot.name || 'Без имени')}</span>
+                        <span class="status-badge ${isOnline ? 'online' : 'offline'}">
+                            ${isOnline ? '🟢 Онлайн' : '🔴 Офлайн'}
+                        </span>
+                    </div>
+                    <div class="bot-meta">Токен: ${escapeHtml((bot.token || '').substring(0, 15))}...</div>
+                    <div class="bot-meta">Вебхук: ${escapeHtml(bot.webhookUrl || 'Не настроен')}</div>
+                    <div class="bot-stats">
+                        <span>💬 ${bot.totalMessages || 0}</span>
+                        <span>👥 ${bot.totalUsers || 0}</span>
+                        <span>❌ ${bot.errors24h || 0}</span>
+                    </div>
+                    <div class="actions">
+                        ${isOnline
+                            ? `<button onclick="stopBot('${bot.id}')">⏹ Остановить</button>
+                               <button onclick="restartBot('${bot.id}')">🔄 Рестарт</button>`
+                            : `<button class="success" onclick="startBot('${bot.id}')">▶ Запустить</button>`
+                        }
+                        <button class="danger" onclick="deleteBot('${bot.id}')">🗑 Удалить</button>
+                    </div>
+                </div>
+            `;
+        }
+
+        // ============ BOT ACTIONS ============
+        async function startBot(botId) {
+            try {
+                await db.collection('bots').doc(botId).update({ status: 'online' });
+                toast('Бот запущен', 'success');
+                addSystemLog(`▶ Бот ${botId} запущен`);
+            } catch (err) {
+                toast('Ошибка: ' + err.message, 'error');
+            }
+        }
+
+        async function stopBot(botId) {
+            try {
+                await db.collection('bots').doc(botId).update({ status: 'offline' });
+                toast('Бот остановлен', 'info');
+                addSystemLog(`⏹ Бот ${botId} остановлен`);
+            } catch (err) {
+                toast('Ошибка: ' + err.message, 'error');
+            }
+        }
+
+        async function restartBot(botId) {
+            try {
+                await db.collection('bots').doc(botId).update({ status: 'offline' });
+                setTimeout(async () => {
+                    await db.collection('bots').doc(botId).update({ status: 'online' });
+                }, 500);
+                toast('Бот перезапущен', 'success');
+                addSystemLog(`🔄 Бот ${botId} перезапущен`);
+            } catch (err) {
+                toast('Ошибка: ' + err.message, 'error');
+            }
+        }
+
+        async function deleteBot(botId) {
+            const bot = botsCache.find(b => b.id === botId);
+            const botName = bot?.name || botId;
+            if (!confirm(`Удалить бота "${botName}" навсегда?`)) return;
+            try {
+                // Удалить файлы из Storage
+                if (bot?.filePath) {
+                    try {
+                        await storage.ref(bot.filePath).delete();
+                    } catch (e) { /* файл мог быть уже удалён */ }
+                }
+                await db.collection('bots').doc(botId).delete();
+                toast(`Бот "${botName}" удалён`, 'info');
+                addSystemLog(`🗑 Бот "${botName}" удалён`);
+            } catch (err) {
+                toast('Ошибка удаления: ' + err.message, 'error');
+            }
+        }
+
+        // ============ ADD BOT ============
+        let uploadedFileContent = null;
+        let uploadedFileName = null;
+
+        document.getElementById('uploadZone').addEventListener('click', () => {
+            document.getElementById('fileInput').click();
         });
-      };
 
-      onSnapshot(query(collection(firestore, `transactions/${currentUser.uid}/items`), orderBy("createdAt","desc"), limit(20)), snap => {
-        document.getElementById('txList').innerHTML = snap.docs.map(d => `<div class="card">${d.data().description} : ${d.data().amount>0?'+':''}${d.data().amount} DKC</div>`).join('');
-      });
-    }
-
-    window.editProfile = () => {
-      get(ref(rtdb, `users/${currentUser.uid}`)).then(snap => {
-        const u = snap.val();
-        modal('Профиль', [
-          {label:'@username', id:'username', value:u.username||''},
-          {label:'Био', id:'bio', type:'textarea', value:u.bio||''}
-        ], async v => {
-          await update(ref(rtdb, `users/${currentUser.uid}`), { username: v.username, bio: v.bio });
-          toast('Сохранено'); renderPage();
+        document.getElementById('fileInput').addEventListener('change', function() {
+            handleFileUpload(this.files[0]);
         });
-      });
-    };
 
-    // ========== ADMIN PANEL ==========
-    async function renderAdmin(container) {
-      const uSnap = await get(ref(rtdb, `users/${currentUser.uid}`));
-      const u = uSnap.val();
-      if (u.role !== 'admin') { toast('Нет доступа', 'error'); navigate('dashboard'); return; }
-
-      container.innerHTML = `<h2>🛡️ Админ-панель</h2>
-        <div class="tabs">
-          <div class="tab active" data-atab="users">Пользователи</div>
-          <div class="tab" data-atab="projects">Проекты</div>
-          <div class="tab" data-atab="promocodes">Промокоды</div>
-        </div>
-        <div id="adminContent"></div>`;
-
-      const adminTabs = document.querySelectorAll('[data-atab]');
-      const adminContent = document.getElementById('adminContent');
-
-      function switchAdminTab(tab) {
-        adminTabs.forEach(t => t.classList.remove('active'));
-        document.querySelector(`[data-atab="${tab}"]`).classList.add('active');
-        if (tab === 'users') renderAdminUsers();
-        else if (tab === 'projects') renderAdminProjects();
-        else if (tab === 'promocodes') renderAdminPromocodes();
-      }
-      adminTabs.forEach(t => t.addEventListener('click', () => switchAdminTab(t.dataset.atab)));
-
-      function renderAdminUsers() {
-        adminContent.innerHTML = '<div class="grid" id="adminUsersGrid"></div>';
-        onValue(ref(rtdb, 'users'), snap => {
-          const users = []; snap.forEach(u => users.push({ uid: u.key, ...u.val() }));
-          document.getElementById('adminUsersGrid').innerHTML = users.map(u => `
-            <div class="card">
-              <img src="${u.photoURL}" style="width:32px;border-radius:50%;vertical-align:middle;" /> ${u.displayName||u.email}
-              <p>Роль: ${u.role||'user'} | DKC: ${u.dkc||0} | LVL: ${u.level||1}</p>
-              <button class="btn btn-xs btn-success" onclick="setRole('${u.uid}','admin')">Админ</button>
-              <button class="btn btn-xs btn-warning" onclick="setRole('${u.uid}','user')">Юзер</button>
-              <button class="btn btn-xs btn-danger" onclick="banUser('${u.uid}')">Бан</button>
-            </div>`).join('');
+        // Drag & Drop
+        document.getElementById('uploadZone').addEventListener('dragover', e => {
+            e.preventDefault();
+            e.currentTarget.style.borderColor = 'var(--primary)';
         });
-      }
-
-      function renderAdminProjects() {
-        adminContent.innerHTML = '<div class="grid" id="adminProjectsGrid"></div>';
-        onValue(ref(rtdb, 'projects'), snap => {
-          const projects = []; snap.forEach(u => u.forEach(p => projects.push({ uid: u.key, pid: p.key, ...p.val() })));
-          document.getElementById('adminProjectsGrid').innerHTML = projects.map(p => `
-            <div class="card">
-              <h4>${p.name}</h4><p>@${p.botUsername||'сайт'}</p>
-              <p>👥 ${p.stats?.users||0} | 💬 ${p.stats?.messages||0}</p>
-              <button class="btn btn-xs btn-danger" onclick="deleteProject('${p.uid}','${p.pid}')">Удалить</button>
-            </div>`).join('');
+        document.getElementById('uploadZone').addEventListener('dragleave', e => {
+            e.currentTarget.style.borderColor = 'var(--border)';
         });
-      }
-
-      function renderAdminPromocodes() {
-        adminContent.innerHTML = `
-          <button class="btn btn-sm btn-primary" id="createPromoBtn">Создать промокод</button>
-          <div class="grid" id="promoGrid"></div>`;
-        document.getElementById('createPromoBtn').onclick = () => modal('Промокод', [
-          {label:'Код', id:'code', placeholder:'WELCOME'},
-          {label:'Сумма DKC', id:'value', placeholder:'100'},
-          {label:'Макс. использований', id:'max', placeholder:'50'}
-        ], async v => {
-          await set(ref(rtdb, `promocodes/${v.code}`), { value: parseInt(v.value), maxUses: parseInt(v.max), usedCount: 0, createdAt: serverTimestamp() });
-          toast('Создан'); switchAdminTab('promocodes');
+        document.getElementById('uploadZone').addEventListener('drop', e => {
+            e.preventDefault();
+            e.currentTarget.style.borderColor = 'var(--border)';
+            handleFileUpload(e.dataTransfer.files[0]);
         });
-        onValue(ref(rtdb, 'promocodes'), snap => {
-          const codes = []; snap.forEach(c => codes.push({ code: c.key, ...c.val() }));
-          document.getElementById('promoGrid').innerHTML = codes.map(c => `
-            <div class="card"><h4>${c.code}</h4><p>${c.value} DKC | ${c.usedCount||0}/${c.maxUses}</p>
-              <button class="btn btn-xs btn-danger" onclick="deletePromo('${c.code}')">Удалить</button></div>`).join('');
+
+        function handleFileUpload(file) {
+            if (!file) return;
+            if (file.size > 10 * 1024 * 1024) {
+                toast('Файл слишком большой (макс 10 МБ)', 'error');
+                return;
+            }
+            uploadedFileName = file.name;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                uploadedFileContent = e.target.result;
+                document.getElementById('fileInfo').innerHTML = 
+                    `✅ ${escapeHtml(file.name)} (${(file.size/1024).toFixed(1)} КБ)`;
+            };
+            reader.readAsText(file);
+        }
+
+        document.getElementById('addBotForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            if (!currentUser) return toast('Войдите в систему', 'error');
+
+            const name = document.getElementById('botName').value.trim();
+            const token = document.getElementById('botToken').value.trim();
+            const code = uploadedFileContent;
+
+            if (!name || !token) return toast('Заполните имя и токен', 'error');
+            if (!code) return toast('Загрузите файл с кодом бота', 'error');
+
+            const btn = this.querySelector('button[type="submit"]');
+            btn.disabled = true;
+            btn.innerHTML = '<span class="spinner"></span> Загрузка...';
+
+            try {
+                // Загружаем файл в Firebase Storage
+                const filePath = `bots/${currentUser.uid}/${Date.now()}_${uploadedFileName || 'bot.py'}`;
+                const uploadTask = await storage.ref(filePath).putString(code);
+                const downloadURL = await storage.ref(filePath).getDownloadURL();
+
+                // Устанавливаем вебхук через Telegram API
+                const botId = Date.now().toString(36) + Math.random().toString(36).substring(2, 6);
+                const webhookUrl = `https://us-central1-devdock-5cb61.cloudfunctions.net/botWebhook?botId=${botId}`;
+
+                let webhookOk = false;
+                try {
+                    const whResp = await fetch(`https://api.telegram.org/bot${token}/setWebhook`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ url: webhookUrl })
+                    });
+                    const whData = await whResp.json();
+                    webhookOk = whData.ok;
+                } catch (whErr) {
+                    console.error('Webhook setup error:', whErr);
+                }
+
+                // Сохраняем в Firestore
+                await db.collection('bots').doc(botId).set({
+                    userId: currentUser.uid,
+                    userEmail: currentUser.email,
+                    name: name,
+                    token: token.substring(0, 15) + '...',
+                    tokenEncrypted: token, // В реальности шифровать!
+                    webhookUrl: webhookUrl,
+                    webhookOk: webhookOk,
+                    status: webhookOk ? 'online' : 'offline',
+                    filePath: filePath,
+                    fileURL: downloadURL,
+                    fileName: uploadedFileName,
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                    totalMessages: 0,
+                    totalUsers: 0,
+                    errors24h: 0
+                });
+
+                // Сбрасываем форму
+                this.reset();
+                uploadedFileContent = null;
+                uploadedFileName = null;
+                document.getElementById('fileInfo').innerHTML = '';
+
+                toast(`Бот "${name}" создан! ${webhookOk ? '✅ Вебхук установлен' : '⚠️ Проверьте токен'}`, webhookOk ? 'success' : 'error');
+                addSystemLog(`➕ Бот "${name}" создан (вебхук: ${webhookOk ? 'OK' : 'Ошибка'})`);
+
+                // Переходим на страницу ботов
+                navigateTo('bots');
+            } catch (err) {
+                console.error('Add bot error:', err);
+                toast('Ошибка: ' + err.message, 'error');
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = '🚀 Запустить бота';
+            }
         });
-      }
 
-      window.setRole = async (uid, role) => { await update(ref(rtdb, `users/${uid}`), { role }); toast('Роль обновлена'); };
-      window.banUser = async (uid) => { if(confirm('Забанить?')) { await update(ref(rtdb, `users/${uid}`), { banned: true }); toast('Забанен'); } };
-      window.deleteProject = async (uid, pid) => { if(confirm('Удалить?')) { await remove(ref(rtdb, `projects/${uid}/${pid}`)); toast('Удалён'); } };
-      window.deletePromo = async (code) => { if(confirm('Удалить?')) { await remove(ref(rtdb, `promocodes/${code}`)); toast('Удалён'); } };
+        // ============ SYSTEM LOGS ============
+        async function addSystemLog(message) {
+            if (!currentUser) return;
+            try {
+                await db.collection('logs').add({
+                    userId: currentUser.uid,
+                    message: message,
+                    timestamp: firebase.firestore.FieldValue.serverTimestamp()
+                });
+            } catch (err) {
+                console.error('Log error:', err);
+            }
+        }
 
-      switchAdminTab('users');
-    }
+        // ============ NAVIGATION ============
+        function navigateTo(pageName) {
+            document.querySelectorAll('.nav-item[data-page]').forEach(btn => btn.classList.remove('active'));
+            const targetBtn = document.querySelector(`.nav-item[data-page="${pageName}"]`);
+            if (targetBtn) targetBtn.classList.add('active');
 
-    onAuthStateChanged(auth, handleUser);
-    document.querySelector('.nav-links').addEventListener('click', e => {
-      if (e.target.tagName === 'A' && e.target.dataset.page) {
-        e.preventDefault();
-        navigate(e.target.dataset.page);
-      }
-    });
-  </script>
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            const targetPage = document.getElementById('page-' + pageName);
+            if (targetPage) targetPage.classList.add('active');
+        }
+
+        document.querySelectorAll('.nav-item[data-page]').forEach(item => {
+            item.addEventListener('click', () => {
+                const pageName = item.dataset.page;
+                navigateTo(pageName);
+                if (pageName === 'logs') {
+                    subscribeToLogs();
+                }
+            });
+        });
+
+        // ============ TOAST ============
+        function toast(message, type = 'info') {
+            const container = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            toast.textContent = message;
+            container.appendChild(toast);
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                toast.style.transition = 'opacity 0.3s';
+                setTimeout(() => toast.remove(), 300);
+            }, 3500);
+        }
+
+        // ============ UTILS ============
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        // ============ INIT ============
+        console.log('🚀 DevDock initialized');
+        console.log('Firebase project:', firebaseConfig.projectId);
+    </script>
 </body>
 </html>
